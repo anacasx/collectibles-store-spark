@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collectibles Store - Items Catalog</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+    <h1>Collectibles Store - Items Catalog</h1>
+
+    <p>Browse our collection of exclusive collectible items. Click on any item to see more details.</p>
+
+    {{#hasItems}}
+        <table id="item-list-table">
+            <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Price</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#items}}
+                <tr>
+                    <td>
+                        <a href="/items/{{id}}" class="item-name-link">{{name}}</a>
+                    </td>
+                    <td>{{price}}</td>
+                </tr>
+            {{/items}}
+            </tbody>
+        </table>
+    {{/hasItems}}
+
+    {{^hasItems}}
+        <p style="text-align: center; color: #666; margin-top: 40px;">
+            No items available at this time. Please check back later.
+        </p>
+    {{/hasItems}}
+
+    <div style="margin-top: 30px; text-align: center;">
+        <a href="/">Back to API Home</a>
+    </div>
+</div>
+
+<script src="/js/script.js"></script>
+</body>
+</html>

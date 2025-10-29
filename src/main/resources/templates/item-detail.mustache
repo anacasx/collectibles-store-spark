@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{name}} - Collectibles Store</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+    <h1>Item Details</h1>
+
+    <div style="background-color: #f9f9f9; padding: 30px; border-radius: 8px; margin-top: 20px;">
+        <h2 style="margin-top: 0; color: #333;">{{name}}</h2>
+
+        <div style="margin: 20px 0;">
+            <strong>Price:</strong> <span style="font-size: 24px; color: #28a745;">{{price}}</span>
+        </div>
+
+        <div style="margin: 20px 0;">
+            <strong>Item ID:</strong> <code>{{id}}</code>
+        </div>
+
+        <div style="margin: 20px 0; line-height: 1.6;">
+            <strong>Description:</strong>
+            <p style="margin-top: 10px;">{{description}}</p>
+        </div>
+    </div>
+
+    <div style="margin-top: 30px;">
+        <a href="/items/view" class="back-link">← Back to Items List</a>
+    </div>
+
+    <div style="margin-top: 10px;">
+        <a href="/">Back to API Home</a>
+    </div>
+</div>
+</body>
+</html>
