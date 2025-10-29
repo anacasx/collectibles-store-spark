@@ -6,9 +6,9 @@ import com.collectibles.exception.NotFoundException;
 import com.collectibles.exception.ServerException;
 import com.collectibles.service.ItemService;
 import com.collectibles.service.UserService;
+import static spark.Spark.*;
 import static spark.Spark.staticFiles;
 
-import static spark.Spark.*;
 
 /**
  * Route configuration class that sets up all API routes and groups.
@@ -39,11 +39,12 @@ public class RouteConfig {
      * This is the main method that sets up the entire routing structure.
      */
     public void configureRoutes() {
+        // BE CAREFUL WITH THE ORDER OF THE ROUTES IN THIS SECTION
         // Configure server settings
         configureServer();
 
         // To use static files (uses files provided for the challlenge6)
-        configureStaticFiles();
+        //configureStaticFiles();
 
         // Set up global filters (CORS, content-type, etc.)
         configureFilters();
@@ -61,12 +62,19 @@ public class RouteConfig {
         System.out.println("Routes configured successfully");
     }
 
+    private void configureStaticFiles(){
+        staticFiles.location("/public");
+        System.out.println("Static files configured: /public");
+    }
+
     /**
      * Configures basic server settings.
      */
     private void configureServer() {
         // Set server port
         port(ServerConfig.getPort());
+
+        configureStaticFiles();
 
         // Enable CORS for all routes
         enableCORS();
@@ -153,19 +161,26 @@ public class RouteConfig {
 
         TemplateController templateController = new TemplateController(itemService);
 
+        // GET /items/view - Display items list page
+        get("/items/view", templateController::renderItemsList);
+
         // Path group for all item-related routes
         path("/items", () -> {
-            // Get all items
+            // API ROUTES (JSON responses)
+
+            // GET /items - Retrieve all items as JSON
             get("", itemController::getAllItems);
-            // GET an specific item
+
+            // GET /items/:id - Retrieve specific item as JSON
             get("/:id", itemController::getItemById);
-            // GET to display items list page
-            get("/view",templateController::renderItemsList);
-            // GET to display item details page
-            get("/view/:id",templateController::renderItemDetail);
+
+            // TEMPLATE ROUTES (HTML responses)
+
+            // GET /items/view/:id - Display item details page
+            get("/view/:id", templateController::renderItemDetail);
         });
 
-        System.out.println("Item routes configured: /items");
+        System.out.println("Item routes configured: /items (API + Views)");
     }
 
     /**
@@ -278,8 +293,5 @@ public class RouteConfig {
         System.out.println("Exception handlers configured");
     }
 
-    private void configureStaticFiles(){
-        staticFiles.location("/public");
-        System.out.println("Static files configured: /public");
-    }
+
 }

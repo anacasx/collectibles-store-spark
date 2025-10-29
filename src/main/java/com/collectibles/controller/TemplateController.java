@@ -43,6 +43,7 @@ public class TemplateController {
      * @return Rendered HTML page with items list
      */
     public String renderItemsList(Request request, Response response) {
+        System.out.println(">>> ¡¡INTENTANDO RENDERIZAR LA LISTA DE ITEMS!!");
         try {
             List<Item> items = itemService.getAllItems();
 
