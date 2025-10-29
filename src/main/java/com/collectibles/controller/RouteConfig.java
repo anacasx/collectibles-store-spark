@@ -1,6 +1,9 @@
 package com.collectibles.controller;
 
 import com.collectibles.config.ServerConfig;
+import com.collectibles.exception.ExceptionHandler;
+import com.collectibles.exception.NotFoundException;
+import com.collectibles.exception.ServerException;
 import com.collectibles.service.ItemService;
 import com.collectibles.service.UserService;
 
@@ -40,6 +43,8 @@ public class RouteConfig {
 
         // Set up global filters (CORS, content-type, etc.)
         configureFilters();
+
+        configureExceptionHandlers();
 
         // Set up route groups
         configureItemRoutes();
@@ -83,8 +88,6 @@ public class RouteConfig {
 
             return "OK";
         });
-
-        // NOTE: CORS headers are now set in configureFilters() before filter
     }
 
     /**
@@ -191,14 +194,6 @@ public class RouteConfig {
      * Configures utility routes like health check and API info.
      */
     private void configureUtilityRoutes() {
-
-        /*/ ---  NEW TEST ROUTE ---
-        get("/test-headers", (request, response) -> {
-            response.type(ServerConfig.JSON_CONTENT_TYPE);
-            return "{ \"message\": \"Header test successful\" }";
-        });
-        // --- END OF NEW ROUTE ---*/
-
         // Root route - API information
         get("/", (request, response) -> {
             response.type(ServerConfig.JSON_CONTENT_TYPE);
@@ -216,5 +211,60 @@ public class RouteConfig {
         });
 
         System.out.println("Utility routes configured: /, /health");
+    }
+
+    /**
+     * Configures exception handlers for the application.
+     * Handles 404 Not Found and 500 Internal Server Error scenarios.
+     */
+    private void configureExceptionHandlers() {
+        // Handle NotFoundException (404)
+        exception(NotFoundException.class, (exception, request, response) -> {
+            response.status(404);
+            response.type("text/html");
+            String errorPage = ExceptionHandler.handle404(
+                    exception.getMessage(),
+                    request.pathInfo()
+            );
+            response.body(errorPage);
+        });
+
+        // Handle ServerException (500)
+        exception(ServerException.class, (exception, request, response) -> {
+            response.status(500);
+            response.type("text/html");
+            String errorPage = ExceptionHandler.handle500(
+                    exception.getMessage(),
+                    exception
+            );
+            response.body(errorPage);
+        });
+
+        // Handle all other exceptions (500)
+        exception(Exception.class, (exception, request, response) -> {
+            response.status(500);
+            response.type("text/html");
+            String errorPage = ExceptionHandler.handle500(
+                    "An unexpected error occurred while processing your request.",
+                    exception
+            );
+            response.body(errorPage);
+
+            // Log the exception
+            System.err.println("Unhandled exception: " + exception.getMessage());
+            exception.printStackTrace();
+        });
+
+        // Handle 404 for undefined routes
+        notFound((request, response) -> {
+            response.status(404);
+            response.type("text/html");
+            return ExceptionHandler.handle404(
+                    "The page you requested could not be found.",
+                    request.pathInfo()
+            );
+        });
+
+        System.out.println("Exception handlers configured");
     }
 }

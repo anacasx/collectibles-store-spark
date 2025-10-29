@@ -1,5 +1,6 @@
 package com.collectibles.controller;
 
+import com.collectibles.exception.NotFoundException;
 import com.collectibles.model.Item;
 import com.collectibles.service.ItemService;
 import com.collectibles.util.JsonUtil;
@@ -65,37 +66,28 @@ public class ItemController {
      * @return JSON string containing the item or error message
      */
     public String getItemById(Request request, Response response) {
-        try {
-            // Extract item ID from URL parameter
-            String itemId = request.params(":id");
+        // Extract item ID from URL parameter
+        String itemId = request.params(":id");
 
-            // Validate that ID was provided
-            if (itemId == null || itemId.trim().isEmpty()) {
-                response.status(400);
-                return createErrorResponse("Item ID is required");
-            }
-
-            // Get item from service
-            Item item = itemService.getItemById(itemId);
-
-            // Check if item was found
-            if (item == null) {
-                response.status(404);
-                return createErrorResponse("Item not found with ID: " + itemId);
-            }
-
-            // Set response status and type
-            response.status(200);
-            response.type("application/json");
-
-            // Convert item to JSON and return
-            return JsonUtil.toJson(item);
-
-        } catch (Exception e) {
-            // Handle unexpected errors
-            response.status(500);
-            return createErrorResponse("Error retrieving item: " + e.getMessage());
+        // Validate that ID was provided
+        if (itemId == null || itemId.trim().isEmpty()) {
+            throw new NotFoundException("Item ID is required");
         }
+
+        // Get item from service
+        Item item = itemService.getItemById(itemId);
+
+        // Check if item was found
+        if (item == null) {
+            throw new NotFoundException("Item not found with ID: " + itemId);
+        }
+
+        // Set response status and type
+        response.status(200);
+        response.type("application/json");
+
+        // Convert item to JSON and return
+        return JsonUtil.toJson(item);
     }
 
     /**

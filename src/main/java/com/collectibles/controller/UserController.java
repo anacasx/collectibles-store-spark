@@ -1,5 +1,7 @@
 package com.collectibles.controller;
 
+import com.collectibles.exception.NotFoundException;
+import com.collectibles.exception.ServerException;
 import com.collectibles.model.User;
 import com.collectibles.service.UserService;
 import com.collectibles.util.JsonUtil;
@@ -65,37 +67,28 @@ public class UserController {
      * @return JSON string containing the user or error message
      */
     public String getUserById(Request request, Response response) {
-        try {
-            // Extract user ID from URL parameter
-            String userId = request.params(":id");
+        // Extract user ID from URL parameter
+        String userId = request.params(":id");
 
-            // Validate that ID was provided
-            if (userId == null || userId.trim().isEmpty()) {
-                response.status(400);
-                return createErrorResponse("User ID is required");
-            }
-
-            // Get user from service
-            User user = userService.getUserById(userId);
-
-            // Check if user was found
-            if (user == null) {
-                response.status(404);
-                return createErrorResponse("User not found with ID: " + userId);
-            }
-
-            // Set response status and type
-            response.status(200);
-            response.type("application/json");
-
-            // Convert user to JSON and return
-            return JsonUtil.toJson(user);
-
-        } catch (Exception e) {
-            // Handle unexpected errors
-            response.status(500);
-            return createErrorResponse("Error retrieving user: " + e.getMessage());
+        // Validate that ID was provided
+        if (userId == null || userId.trim().isEmpty()) {
+            throw new NotFoundException("User ID is required");
         }
+
+        // Get user from service
+        User user = userService.getUserById(userId);
+
+        // Check if user was found
+        if (user == null) {
+            throw new NotFoundException("User not found with ID: " + userId);
+        }
+
+        // Set response status and type
+        response.status(200);
+        response.type("application/json");
+
+        // Convert user to JSON and return
+        return JsonUtil.toJson(user);
     }
 
     /**
@@ -233,8 +226,7 @@ public class UserController {
 
             // Check if user exists
             if (!userService.userExists(userId)) {
-                response.status(404);
-                return createErrorResponse("User not found with ID: " + userId);
+                throw new NotFoundException("User not found with ID: " + userId);
             }
 
             // Get request body
@@ -293,14 +285,13 @@ public class UserController {
             // Return updated user as JSON
             return JsonUtil.toJson(result);
 
+        } catch (NotFoundException e) {
+            throw e; // Re-throw to be handled by exception handler
         } catch (IllegalArgumentException e) {
-            // Handle user not found error
             response.status(404);
             return createErrorResponse(e.getMessage());
         } catch (Exception e) {
-            // Handle unexpected errors
-            response.status(500);
-            return createErrorResponse("Error updating user: " + e.getMessage());
+            throw new ServerException("Error updating user: " + e.getMessage(), e);
         }
     }
 
