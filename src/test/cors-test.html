@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS Test - Collectibles Store API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #666;
+            margin-top: 20px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .result {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 10px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success {
+            border-left: 4px solid #4CAF50;
+        }
+        .error {
+            border-left: 4px solid #f44336;
+        }
+        .info {
+            background-color: #e3f2fd;
+            border: 1px solid #2196F3;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        .headers {
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>CORS Test Page - Collectibles Store API</h1>
+
+    <div class="info">
+        <strong>Instructions:</strong> This page tests Cross-Origin Resource Sharing (CORS) for the API.
+        Make sure the server is running on http://localhost:4567 before testing.
+    </div>
+
+    <h2>Test Items Endpoints</h2>
+    <button onclick="testGetAllItems()">GET /items</button>
+    <button onclick="testGetItemById()">GET /items/item1</button>
+    <div id="items-result" class="result"></div>
+
+    <h2>Test Users Endpoints</h2>
+    <button onclick="testGetAllUsers()">GET /users</button>
+    <button onclick="testGetUserById()">GET /users/user1</button>
+    <div id="users-result" class="result"></div>
+
+    <h2>Test POST Request</h2>
+    <button onclick="testPostUser()">POST /users/testuser</button>
+    <div id="post-result" class="result"></div>
+
+    <h2>Test PUT Request</h2>
+    <button onclick="testPutUser()">PUT /users/user2</button>
+    <div id="put-result" class="result"></div>
+
+    <h2>Test DELETE Request</h2>
+    <button onclick="testDeleteUser()">DELETE /users/testuser</button>
+    <div id="delete-result" class="result"></div>
+
+    <h2>Test OPTIONS Request</h2>
+    <button onclick="testOptionsUser()">OPTIONS /users/user1</button>
+    <div id="options-result" class="result"></div>
+
+    <h2>CORS Headers Check</h2>
+    <button onclick="checkCorsHeaders()">Check CORS Headers</button>
+    <div id="cors-result" class="result"></div>
+</div>
+
+<script>
+    const API_BASE = 'http://localhost:4567';
+
+    function displayResult(elementId, data, isError = false) {
+        const element = document.getElementById(elementId);
+        element.className = 'result ' + (isError ? 'error' : 'success');
+        element.textContent = JSON.stringify(data, null, 2);
+    }
+
+    function displayHeaders(elementId, response) {
+        const element = document.getElementById(elementId);
+        let headersText = 'Response Headers:\n';
+        response.headers.forEach((value, key) => {
+            headersText += `${key}: ${value}\n`;
+        });
+        element.innerHTML = `<div class="headers">${headersText}</div>`;
+    }
+
+    async function testGetAllItems() {
+        try {
+            const response = await fetch(`${API_BASE}/health`);
+            const data = await response.json();
+            displayResult('items-result', {
+                status: response.status,
+                itemCount: data.length,
+                firstItem: data[0]
+            });
+        } catch (error) {
+            displayResult('items-result', { error: error.message }, true);
+        }
+    }
+
+    async function testGetItemById() {
+        try {
+            const response = await fetch(`${API_BASE}/items/item1`);
+            const data = await response.json();
+            displayResult('items-result', {
+                status: response.status,
+                item: data
+            });
+        } catch (error) {
+            displayResult('items-result', { error: error.message }, true);
+        }
+    }
+
+    async function testGetAllUsers() {
+        try {
+            const response = await fetch(`${API_BASE}/users`);
+            const data = await response.json();
+            displayResult('users-result', {
+                status: response.status,
+                userCount: data.length,
+                users: data
+            });
+        } catch (error) {
+            displayResult('users-result', { error: error.message }, true);
+        }
+    }
+
+    async function testGetUserById() {
+        try {
+            const response = await fetch(`${API_BASE}/users/user1`);
+            const data = await response.json();
+            displayResult('users-result', {
+                status: response.status,
+                user: data
+            });
+        } catch (error) {
+            displayResult('users-result', { error: error.message }, true);
+        }
+    }
+
+    async function testPostUser() {
+        try {
+            const response = await fetch(`${API_BASE}/users/testuser`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: 'CORS Test User',
+                    email: 'cors@test.com',
+                    role: 'buyer'
+                })
+            });
+            const data = await response.json();
+            displayResult('post-result', {
+                status: response.status,
+                statusText: response.statusText,
+                user: data
+            });
+        } catch (error) {
+            displayResult('post-result', { error: error.message }, true);
+        }
+    }
+
+    async function testPutUser() {
+        try {
+            const response = await fetch(`${API_BASE}/users/user2`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: 'Updated via CORS',
+                    email: 'cors.updated@test.com',
+                    role: 'seller'
+                })
+            });
+            const data = await response.json();
+            displayResult('put-result', {
+                status: response.status,
+                user: data
+            });
+        } catch (error) {
+            displayResult('put-result', { error: error.message }, true);
+        }
+    }
+
+    async function testDeleteUser() {
+        try {
+            const response = await fetch(`${API_BASE}/users/testuser`, {
+                method: 'DELETE'
+            });
+            displayResult('delete-result', {
+                status: response.status,
+                statusText: response.statusText,
+                message: response.status === 204 ? 'User deleted successfully' : 'Unexpected status'
+            });
+        } catch (error) {
+            displayResult('delete-result', { error: error.message }, true);
+        }
+    }
+
+    async function testOptionsUser() {
+        try {
+            const response = await fetch(`${API_BASE}/users/user1`, {
+                method: 'OPTIONS'
+            });
+            const data = await response.json();
+            displayResult('options-result', {
+                status: response.status,
+                result: data
+            });
+        } catch (error) {
+            displayResult('options-result', { error: error.message }, true);
+        }
+    }
+
+    async function checkCorsHeaders() {
+        try {
+            const response = await fetch(`${API_BASE}/items`);
+
+            const corsHeaders = {
+                'Access-Control-Allow-Origin': response.headers.get('Access-Control-Allow-Origin'),
+                'Access-Control-Allow-Methods': response.headers.get('Access-Control-Allow-Methods'),
+                'Access-Control-Allow-Headers': response.headers.get('Access-Control-Allow-Headers'),
+                'Content-Type': response.headers.get('Content-Type'),
+                'X-Content-Type-Options': response.headers.get('X-Content-Type-Options'),
+                'X-Frame-Options': response.headers.get('X-Frame-Options'),
+                'X-XSS-Protection': response.headers.get('X-XSS-Protection'),
+                'Server': response.headers.get('Server'),
+                'Cache-Control': response.headers.get('Cache-Control')
+            };
+
+            const allCorsPresent =
+                corsHeaders['Access-Control-Allow-Origin'] === '*' &&
+                corsHeaders['Access-Control-Allow-Methods'] !== null &&
+                corsHeaders['Access-Control-Allow-Headers'] !== null;
+
+            displayResult('cors-result', {
+                status: response.status,
+                corsConfigured: allCorsPresent,
+                headers: corsHeaders,
+                securityHeaders: {
+                    'X-Content-Type-Options': corsHeaders['X-Content-Type-Options'],
+                    'X-Frame-Options': corsHeaders['X-Frame-Options'],
+                    'X-XSS-Protection': corsHeaders['X-XSS-Protection']
+                }
+            });
+        } catch (error) {
+            displayResult('cors-result', { error: error.message }, true);
+        }
+    }
+</script>
+</body>
+</html>
