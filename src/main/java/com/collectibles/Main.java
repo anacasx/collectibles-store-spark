@@ -46,6 +46,7 @@ public class Main {
         System.out.println("--- Initializing Services ---");
         itemService = new ItemService();
         userService = new UserService();
+        offerService = new OfferService();
         System.out.println("--- Services Initialized ---\n");
     }
 

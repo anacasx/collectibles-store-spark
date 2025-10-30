@@ -299,22 +299,25 @@ public class RouteConfig {
         System.out.println("Exception handlers configured");
     }
 
+    /**
+     * Configures all routes related to offers.
+     * Groups all /offers endpoints together.
+     */
     private void configureOfferRoutes() {
-        OfferController offerController = new OfferController(offerService);
-        TemplateController templateController = new TemplateController(itemService, offerService);
-        // API: Create offer
+        // Create OfferController instance
+        OfferController offerController = new OfferController(offerService, itemService);
+
+        // POST /offers
         post("/offers", offerController::createOffer);
 
-        path("/offers", () -> {
-            // API: Get all offers
-            get("", offerController::getAllOffers);
+        // GET /offers
+        get("/offers", offerController::getAllOffersJson);
 
-            // View: Offers list page
-            get("/view", templateController::renderOffersList);
-        });
+        // GET /offers/view
+        get("/offers/view", offerController::viewOffers);
 
-        // Offer form route (under /items)
-        get("/items/view/:id/offer", templateController::renderOfferForm);
+        // GET /offers/form
+        get("/offers/form", offerController::showOfferForm);
 
         System.out.println("Offer routes configured: /offers");
     }

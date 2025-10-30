@@ -3,38 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submit Offer - {{itemName}}</title>
+    <title>Submit Offer - Collectibles Store</title>
     <link rel="stylesheet" href="/css/styles.css">
-    <link rel="stylesheet" href="/css/styles-forms.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 <div class="container">
-    <h1>Submit an Offer</h1>
+    <h1>Submit Your Offer</h1>
 
-    <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
-        <h2 style="margin-top: 0;">Item: {{itemName}}</h2>
-        <p><strong>Current Price:</strong> {{itemPrice}}</p>
-        <p><strong>Item ID:</strong> <code>{{itemId}}</code></p>
-    </div>
+    {{#itemName}}
+        <div class="item-info">
+            <h2>{{itemName}}</h2>
+            <p class="item-price">Current Price: {{itemPrice}}</p>
+        </div>
+    {{/itemName}}
 
-    <form id="offer-form" method="POST" action="/offers">
-        <input type="hidden" name="id" value="{{itemId}}">
+    <form id="offer-form" action="/offers" method="POST">
+        <div class="form-item">
+            <label for="itemId" class="form-label">Item ID *</label>
+            <input type="text"
+                   id="itemId"
+                   name="itemId"
+                   class="form-input"
+                   value="{{itemId}}"
+                   required
+                   {{#itemId}}readonly{{/itemId}}>
+        </div>
 
         <div class="form-item">
             <label for="name-input" class="form-label">Your Name *</label>
-            <input type="text" id="name-input" name="name" class="form-input" required>
+            <input type="text"
+                   id="name-input"
+                   name="name"
+                   class="form-input"
+                   placeholder="Enter your full name"
+                   required>
         </div>
 
         <div class="form-item">
             <label for="email-input" class="form-label">Email Address *</label>
-            <input type="email" id="email-input" name="email" class="form-input" required>
+            <input type="email"
+                   id="email-input"
+                   name="email"
+                   class="form-input"
+                   placeholder="your.email@example.com"
+                   required>
         </div>
 
         <div class="form-item">
-            <label for="amount-input" class="form-label">Proposed Amount (USD) *</label>
-            <input type="number" id="amount-input" name="amount" class="form-input"
-                   step="0.01" min="0.01" required>
+            <label for="amount-input" class="form-label">Your Offer (USD) *</label>
+            <input type="number"
+                   id="amount-input"
+                   name="amount"
+                   class="form-input"
+                   placeholder="0.00"
+                   step="0.01"
+                   min="0.01"
+                   required>
         </div>
 
         <div class="form-item">
@@ -42,12 +66,54 @@
         </div>
     </form>
 
-    <div style="margin-top: 30px;">
-        <a href="/items/view/{{itemId}}">Back to Item Details</a> |
-        <a href="/items/view">Back to Items List</a>
-    </div>
+    <div id="message" class="error-message" style="display: none;"></div>
+
+    <p><a href="/items/view">Back to Items</a> | <a href="/offers/view">View All Offers</a></p>
 </div>
 
-<script src="/js/offer-form.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $("#offer-form").submit(function(event) {
+            event.preventDefault();
+
+            let itemId = $("#itemId").val();
+            let name = $("#name-input").val();
+            let email = $("#email-input").val();
+            let amount = $("#amount-input").val();
+
+            if (!itemId || !name || !email || !amount) {
+                $("#message").text("Please fill out all fields!").show();
+                return;
+            }
+
+            $.ajax({
+                url: "/offers",
+                method: "POST",
+                data: {
+                    itemId: itemId,
+                    name: name,
+                    email: email,
+                    amount: amount
+                },
+                success: function(response) {
+                    alert("Your offer has been submitted successfully!");
+                    $("#offer-form")[0].reset();
+                    window.location.href = "/offers/view";
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    let errorMsg = "Error submitting offer";
+                    try {
+                        let errorData = JSON.parse(jqXHR.responseText);
+                        errorMsg = errorData.message || errorMsg;
+                    } catch (e) {
+                        errorMsg = jqXHR.responseText || errorMsg;
+                    }
+                    $("#message").text(errorMsg).show();
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>

@@ -5,34 +5,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All Offers - Collectibles Store</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .offers-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .offers-table th,
+        .offers-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .offers-table th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+        .offers-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .offers-table tr:hover {
+            background-color: #e9ecef;
+        }
+        .no-offers {
+            text-align: center;
+            padding: 40px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .offer-count {
+            color: #666;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-<div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+<div class="container">
     <h1>All Submitted Offers</h1>
 
-    <p>Total offers received: <strong>{{offerCount}}</strong></p>
+    <p class="offer-count">Total Offers: {{offerCount}}</p>
 
     {{#hasOffers}}
-        <table>
+        <table class="offers-table">
             <thead>
             <tr>
                 <th>Offer ID</th>
                 <th>Item ID</th>
                 <th>Buyer Name</th>
                 <th>Email</th>
-                <th>Proposed Amount</th>
+                <th>Offer Amount</th>
                 <th>Date</th>
             </tr>
             </thead>
             <tbody>
             {{#offers}}
                 <tr>
-                    <td><code>{{id}}</code></td>
-                    <td><code>{{itemId}}</code></td>
+                    <td>{{id}}</td>
+                    <td>{{itemId}}</td>
                     <td>{{name}}</td>
                     <td>{{email}}</td>
-                    <td style="color: #28a745; font-weight: bold;">${{amount}}</td>
-                    <td>{{formattedDate}}</td>
+                    <td>${{amount}}</td>
+                    <td>{{timestamp}}</td>
                 </tr>
             {{/offers}}
             </tbody>
@@ -40,15 +76,18 @@
     {{/hasOffers}}
 
     {{^hasOffers}}
-        <p style="text-align: center; color: #666; margin-top: 40px;">
-            No offers have been submitted yet.
-        </p>
+        <div class="no-offers">
+            <h2>No Offers Yet</h2>
+            <p>There are currently no offers submitted.</p>
+            <p><a href="/offers/form">Submit the First Offer</a></p>
+        </div>
     {{/hasOffers}}
 
-    <div style="margin-top: 30px;">
-        <a href="/items/view">Back to Items List</a> |
-        <a href="/">Back to API Home</a>
-    </div>
+    <p style="margin-top: 30px;">
+        <a href="/items/view">Back to Items</a> |
+        <a href="/offers/form">Submit New Offer</a> |
+        <a href="/">Home</a>
+    </p>
 </div>
 </body>
 </html>
