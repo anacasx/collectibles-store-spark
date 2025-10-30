@@ -3,6 +3,7 @@ package com.collectibles;
 import com.collectibles.config.ServerConfig;
 import com.collectibles.controller.RouteConfig;
 import com.collectibles.service.ItemService;
+import com.collectibles.service.OfferService;
 import com.collectibles.service.UserService;
 
 /**
@@ -17,6 +18,8 @@ public class Main {
     // Service instances
     private static ItemService itemService;
     private static UserService userService;
+    private static OfferService offerService;
+
 
     /**
      * Main entry point for the application.
@@ -51,7 +54,7 @@ public class Main {
      */
     private static void configureRoutes() {
         System.out.println("--- Configuring Routes ---");
-        RouteConfig routeConfig = new RouteConfig(itemService, userService);
+        RouteConfig routeConfig = new RouteConfig(itemService, userService, offerService);
         routeConfig.configureRoutes();
         System.out.println("--- Routes Configured ---\n");
     }
@@ -76,4 +79,4 @@ public class Main {
         System.out.println("  OPTIONS http://localhost:" + ServerConfig.getPort() + "/users/:id");
         System.out.println("\n=== Ready to Accept Requests ===\n");
     }
-}
+ }

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Offers - Collectibles Store</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+    <h1>All Submitted Offers</h1>
+
+    <p>Total offers received: <strong>{{offerCount}}</strong></p>
+
+    {{#hasOffers}}
+        <table>
+            <thead>
+            <tr>
+                <th>Offer ID</th>
+                <th>Item ID</th>
+                <th>Buyer Name</th>
+                <th>Email</th>
+                <th>Proposed Amount</th>
+                <th>Date</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#offers}}
+                <tr>
+                    <td><code>{{id}}</code></td>
+                    <td><code>{{itemId}}</code></td>
+                    <td>{{name}}</td>
+                    <td>{{email}}</td>
+                    <td style="color: #28a745; font-weight: bold;">${{amount}}</td>
+                    <td>{{formattedDate}}</td>
+                </tr>
+            {{/offers}}
+            </tbody>
+        </table>
+    {{/hasOffers}}
+
+    {{^hasOffers}}
+        <p style="text-align: center; color: #666; margin-top: 40px;">
+            No offers have been submitted yet.
+        </p>
+    {{/hasOffers}}
+
+    <div style="margin-top: 30px;">
+        <a href="/items/view">Back to Items List</a> |
+        <a href="/">Back to API Home</a>
+    </div>
+</div>
+</body>
+</html>

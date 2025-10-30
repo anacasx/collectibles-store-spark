@@ -3,6 +3,9 @@ package com.collectibles.controller;
 import com.collectibles.exception.NotFoundException;
 import com.collectibles.model.Item;
 import com.collectibles.service.ItemService;
+import com.collectibles.service.OfferService;
+import com.collectibles.model.Offer;
+import java.util.ArrayList;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
@@ -22,6 +25,7 @@ import java.util.Map;
 public class TemplateController {
 
     private final ItemService itemService;
+    private final OfferService offerService;
     private final MustacheTemplateEngine templateEngine;
 
     /**
@@ -29,8 +33,9 @@ public class TemplateController {
      *
      * @param itemService Service for item operations
      */
-    public TemplateController(ItemService itemService) {
+    public TemplateController(ItemService itemService, OfferService offerService) {
         this.itemService = itemService;
+        this.offerService = offerService;
         this.templateEngine = new MustacheTemplateEngine();
     }
 
@@ -43,7 +48,7 @@ public class TemplateController {
      * @return Rendered HTML page with items list
      */
     public String renderItemsList(Request request, Response response) {
-        System.out.println(">>> ¡¡INTENTANDO RENDERIZAR LA LISTA DE ITEMS!!");
+        System.out.println(">>> Trying!!");
         try {
             List<Item> items = itemService.getAllItems();
 
@@ -109,6 +114,73 @@ public class TemplateController {
 
         } catch (Exception e) {
             throw new NotFoundException("Error loading item details: " + e.getMessage());
+        }
+    }
+    /**
+     * Renders the offer form for a specific item.
+     */
+    public String renderOfferForm(Request request, Response response) {
+        String itemId = request.params(":id");
+
+        if (itemId == null || itemId.trim().isEmpty()) {
+            throw new NotFoundException("Item ID is required");
+        }
+
+        Item item = itemService.getItemById(itemId);
+        if (item == null) {
+            throw new NotFoundException("Item not found with ID: " + itemId);
+        }
+
+        try {
+            Map<String, Object> model = new HashMap<>();
+            model.put("itemId", item.getId());
+            model.put("itemName", item.getName());
+            model.put("itemPrice", item.getPrice());
+
+            response.type("text/html");
+            response.status(200);
+
+            ModelAndView modelAndView = new ModelAndView(model, "offer-form.mustache");
+            return templateEngine.render(modelAndView);
+
+        } catch (Exception e) {
+            throw new NotFoundException("Error loading offer form: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Renders the offers list page.
+     */
+    public String renderOffersList(Request request, Response response) {
+        try {
+            List<Offer> offers = offerService.getAllOffers();
+
+            // Format offers with dates
+            List<Map<String, Object>> formattedOffers = new ArrayList<>();
+            for (Offer offer : offers) {
+                Map<String, Object> offerData = new HashMap<>();
+                offerData.put("id", offer.getId());
+                offerData.put("itemId", offer.getItemId());
+                offerData.put("name", offer.getName());
+                offerData.put("email", offer.getEmail());
+                offerData.put("amount", String.format("%.2f", offer.getAmount()));
+                offerData.put("formattedDate", new java.util.Date(offer.getTimestamp()).toString());
+                formattedOffers.add(offerData);
+            }
+
+            Map<String, Object> model = new HashMap<>();
+            model.put("offers", formattedOffers);
+            model.put("hasOffers", !offers.isEmpty());
+            model.put("offerCount", offers.size());
+
+            response.type("text/html");
+            response.status(200);
+
+            ModelAndView modelAndView = new ModelAndView(model, "offers-list.mustache");
+            return templateEngine.render(modelAndView);
+
+        } catch (Exception e) {
+            throw new NotFoundException("Error loading offers list: " + e.getMessage());
         }
     }
 }

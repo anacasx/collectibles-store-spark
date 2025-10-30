@@ -5,9 +5,11 @@ import com.collectibles.exception.ExceptionHandler;
 import com.collectibles.exception.NotFoundException;
 import com.collectibles.exception.ServerException;
 import com.collectibles.service.ItemService;
+import com.collectibles.service.OfferService;
 import com.collectibles.service.UserService;
 import static spark.Spark.*;
 import static spark.Spark.staticFiles;
+
 
 
 /**
@@ -22,6 +24,8 @@ public class RouteConfig {
 
     private final ItemService itemService;
     private final UserService userService;
+    private final OfferService offerService;
+
 
     /**
      * Constructor that receives service dependencies.
@@ -29,9 +33,10 @@ public class RouteConfig {
      * @param itemService Service for item operations
      * @param userService Service for user operations
      */
-    public RouteConfig(ItemService itemService, UserService userService) {
+    public RouteConfig(ItemService itemService, UserService userService, OfferService offerService) {
         this.itemService = itemService;
         this.userService = userService;
+        this.offerService = offerService;
     }
 
     /**
@@ -55,6 +60,7 @@ public class RouteConfig {
         // Set up route groups
         configureItemRoutes();
         configureUserRoutes();
+        configureOfferRoutes();
 
         // Set up utility routes
         configureUtilityRoutes();
@@ -159,7 +165,7 @@ public class RouteConfig {
         // Create ItemController instance
         ItemController itemController = new ItemController(itemService);
 
-        TemplateController templateController = new TemplateController(itemService);
+        TemplateController templateController = new TemplateController(itemService, offerService);
 
         // GET /items/view - Display items list page
         get("/items/view", templateController::renderItemsList);
@@ -291,6 +297,27 @@ public class RouteConfig {
         });
 
         System.out.println("Exception handlers configured");
+    }
+
+    private void configureOfferRoutes() {
+        OfferController offerController = new OfferController(offerService);
+        TemplateController templateController = new TemplateController(itemService, offerService);
+
+        path("/offers", () -> {
+            // API: Create offer
+            post("", offerController::createOffer);
+
+            // API: Get all offers
+            get("", offerController::getAllOffers);
+
+            // View: Offers list page
+            get("/view", templateController::renderOffersList);
+        });
+
+        // Offer form route (under /items)
+        get("/items/view/:id/offer", templateController::renderOfferForm);
+
+        System.out.println("Offer routes configured: /offers");
     }
 
 
