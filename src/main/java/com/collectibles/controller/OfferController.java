@@ -3,10 +3,12 @@ package com.collectibles.controller;
 import com.collectibles.exception.NotFoundException;
 import com.collectibles.exception.ServerException;
 import com.collectibles.model.Offer;
+import com.collectibles.service.ItemService;
 import com.collectibles.service.OfferService;
 import com.collectibles.util.JsonUtil;
 import spark.Request;
 import spark.Response;
+import spark.template.mustache.MustacheTemplateEngine;
 
 import java.util.HashMap;
 import java.util.List;

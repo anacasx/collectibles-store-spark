@@ -302,11 +302,10 @@ public class RouteConfig {
     private void configureOfferRoutes() {
         OfferController offerController = new OfferController(offerService);
         TemplateController templateController = new TemplateController(itemService, offerService);
+        // API: Create offer
+        post("/offers", offerController::createOffer);
 
         path("/offers", () -> {
-            // API: Create offer
-            post("", offerController::createOffer);
-
             // API: Get all offers
             get("", offerController::getAllOffers);
 
