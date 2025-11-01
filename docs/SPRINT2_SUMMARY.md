@@ -9,17 +9,17 @@ Sprint 2 successfully transformed the REST API into a web application with visua
 ## Objectives Achieved
 
 ### Primary Goals
-- ✅ Implement exception handling module (404, 500)
-- ✅ Create views and templates with Mustache
-- ✅ Develop web forms for offer management
-- ✅ Integrate provided CSS and JavaScript files
+- Implement exception handling module (404, 500)
+- Create views and templates with Mustache
+- Develop web forms for offer management
+- Integrate provided CSS and JavaScript files
 
 ### Additional Achievements
-- ✅ User-friendly error pages
-- ✅ Responsive template design
-- ✅ Complete offer workflow
-- ✅ Maintained API functionality
-- ✅ Cross-browser compatibility
+- User-friendly error pages
+- Responsive template design
+- Complete offer workflow
+- Maintained API functionality
+- Cross-browser compatibility
 
 ---
 
@@ -48,8 +48,8 @@ Sprint 2 successfully transformed the REST API into a web application with visua
 - GET /offers endpoint
 
 #### 4. Static Resources
-- styles.css (from instructor - Sprint 2_2 and 2_3)
-- script.js (from instructor - Sprint 2_2 and 2_3)
+- styles.css (from NAO - Sprint 2_2 and 2_3)
+- script.js (from NAO - Sprint 2_2 and 2_3)
 - Organized in public/ folder
 
 ### Endpoints Implemented
@@ -99,23 +99,23 @@ Sprint 2 successfully transformed the REST API into a web application with visua
 
 | Requirement | Description | Status |
 |-------------|-------------|--------|
-| REQ-34 | Custom exception classes | ✅ Complete |
-| REQ-35 | 404 error handler | ✅ Complete |
-| REQ-36 | 500 error handler | ✅ Complete |
-| REQ-37 | Mustache configuration | ✅ Complete |
-| REQ-38 | Items list template | ✅ Complete |
-| REQ-39 | Item details template | ✅ Complete |
-| REQ-40 | Integrate styles.css | ✅ Complete |
-| REQ-41 | Integrate script.js | ✅ Complete |
-| REQ-42 | Offer entity class | ✅ Complete |
-| REQ-43 | Offer form template | ✅ Complete |
-| REQ-44 | POST /offers endpoint | ✅ Complete |
-| REQ-45 | Form validation | ✅ Complete |
-| REQ-46 | Parse ofertas.json | ✅ Complete |
-| REQ-47 | GET /offers endpoint | ✅ Complete |
-| REQ-48 | Offers list template | ✅ Complete |
-| REQ-49 | Template rendering routes | ✅ Complete |
-| REQ-50 | Template error handling | ✅ Complete |
+| REQ-34 | Custom exception classes | Complete |
+| REQ-35 | 404 error handler | Complete |
+| REQ-36 | 500 error handler | Complete |
+| REQ-37 | Mustache configuration | Complete |
+| REQ-38 | Items list template | Complete |
+| REQ-39 | Item details template | Complete |
+| REQ-40 | Integrate styles.css | Complete |
+| REQ-41 | Integrate script.js | Complete |
+| REQ-42 | Offer entity class | Complete |
+| REQ-43 | Offer form template | Complete |
+| REQ-44 | POST /offers endpoint | Complete |
+| REQ-45 | Form validation | Complete |
+| REQ-46 | Parse ofertas.json | Complete |
+| REQ-47 | GET /offers endpoint | Complete |
+| REQ-48 | Offers list template | Complete |
+| REQ-49 | Template rendering routes | Complete |
+| REQ-50 | Template error handling | Complete |
 
 **Total Requirements**: 17 (all completed - 100%)
 
@@ -125,14 +125,14 @@ Sprint 2 successfully transformed the REST API into a web application with visua
 
 | Phase | Duration | Status |
 |-------|----------|--------|
-| Phase 1: Planning | 1-1.5 hours | ✅ Complete |
-| Phase 2: Exception Handling | 2-3 hours | ✅ Complete |
-| Phase 3: Mustache Configuration | 2-3 hours | ✅ Complete |
-| Phase 4: Items Templates | 2-3 hours | ✅ Complete |
-| Phase 5: Offer Form | 2-3 hours | ✅ Complete |
-| Phase 6: Offers List | 2-3 hours | ✅ Complete |
-| Phase 7: Integration & Completion | 2-3 hours | ✅ Complete |
-| **TOTAL** | **~18 hours** | **✅ COMPLETE** |
+| Phase 1: Planning | 1-1.5 hours | Complete |
+| Phase 2: Exception Handling | 2-3 hours | Complete |
+| Phase 3: Mustache Configuration | 2-3 hours | Complete |
+| Phase 4: Items Templates | 2-3 hours | Complete |
+| Phase 5: Offer Form | 2-3 hours | Complete |
+| Phase 6: Offers List | 2-3 hours | Complete |
+| Phase 7: Integration & Completion | 2-3 hours | Complete |
+| **TOTAL** | **~18 hours** | **COMPLETE** |
 
 ---
 
@@ -159,17 +159,17 @@ Sprint 2 successfully transformed the REST API into a web application with visua
 ## Key Learnings
 
 ### What Went Well
-- ✅ Mustache templates easy to learn and use
-- ✅ Exception handling improved user experience significantly
-- ✅ CSS/JS integration straightforward
-- ✅ Offer system workflow intuitive
-- ✅ Maintained API functionality alongside templates
+- Mustache templates easy to learn and use
+- Exception handling improved user experience significantly
+- CSS/JS integration straightforward
+- Offer system workflow intuitive
+- Maintained API functionality alongside templates
 
 ### What Could Be Improved
-- ⚠️ Could add more CSS customization
-- ⚠️ Form validation could be more robust (client-side)
-- ⚠️ Could add pagination for offers list
-- ⚠️ Could implement offer editing/deletion
+- Could add more CSS customization
+- Form validation could be more robust (client-side)
+- Could add pagination for offers list
+- Could implement offer editing/deletion
 
 ### Best Practices Applied
 1. Separation of concerns (templates vs business logic)
@@ -182,31 +182,31 @@ Sprint 2 successfully transformed the REST API into a web application with visua
 
 ## User Stories Validation
 
-### US-16: Error Pages ✅
+### US-16: Error Pages 
 - 404 pages display for missing resources
 - 500 pages display for server errors
 - User-friendly messages
 - Action buttons work
 
-### US-17: Visual Item Catalog ✅
+### US-17: Visual Item Catalog 
 - All 7 items display in styled list
 - Name and price shown for each item
 - CSS styling applied correctly
 - Page loads without errors
 
-### US-18: Item Details Page ✅
+### US-18: Item Details Page 
 - Clicking item navigates to details
 - Full description displayed
 - Back navigation works
 - Responsive design
 
-### US-19: Submit Auction Offer ✅
+### US-19: Submit Auction Offer 
 - Form captures all required data
 - Email validation works
 - Offers saved to service
 - Confirmation feedback shown
 
-### US-20: View All Offers ✅
+### US-20: View All Offers 
 - GET /offers returns all offers
 - Offers displayed in template
 - All offer details visible
@@ -217,11 +217,7 @@ Sprint 2 successfully transformed the REST API into a web application with visua
 ## Documentation Updates
 
 ### New Documentation (Sprint 2)
-1. EXCEPTION_HANDLING.md - Exception system documentation
-2. TEMPLATES_GUIDE.md - Mustache templates guide
-3. OFFERS_SYSTEM.md - Offer management documentation
-4. SPRINT2_ROADMAP.md - Sprint 2 planning
-5. SPRINT2_SUMMARY.md - This document
+1. SPRINT2_SUMMARY.md - This document
 
 ### Updated Documentation
 1. API_DOCUMENTATION.md - Added template endpoints
@@ -247,12 +243,12 @@ Sprint 2 successfully transformed the REST API into a web application with visua
 ## Ready for Sprint 3
 
 ### Prerequisites Met
-- ✅ All Sprint 2 requirements complete
-- ✅ Templates fully functional
-- ✅ Offer system operational
-- ✅ Documentation comprehensive
-- ✅ Repository organized
-- ✅ Foundation for real-time features
+- All Sprint 2 requirements complete
+- Templates fully functional
+- Offer system operational
+- Documentation comprehensive
+- Repository organized
+- Foundation for real-time features
 
 ### Upcoming (Sprint 3)
 - Price range filtering
@@ -302,7 +298,7 @@ Sprint 2 successfully transformed the REST API into a web application with visua
 
 ---
 
-**Sprint 2 Status**: ✅ SUCCESSFULLY COMPLETED  
+**Sprint 2 Status**: SUCCESSFULLY COMPLETED  
 **Ready for Evaluation**: YES  
 **Ready for Sprint 3**: YES
 
