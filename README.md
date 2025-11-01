@@ -399,7 +399,7 @@ This project is part of the Digital NAO Backend Developer Certification program.
 ## Project Timeline
 
 - **Sprint 1**: 4 days (API Service Foundation) - COMPLETE
-- **Sprint 2**: 3 days (Templates & Exceptions) - Planned
+- **Sprint 2**: 3 days (Templates & Exceptions) - COMPLETE
 - **Sprint 3**: 4 days (Filters & WebSockets) - Planned
 - **Final Submission**: 2 days (Integration & Presentation) - Planned
 
@@ -407,7 +407,7 @@ This project is part of the Digital NAO Backend Developer Certification program.
 
 ## Project Status
 
-**Sprint 1**: COMPLETE  
+**Sprint 2**: COMPLETE  
 **Current Version**: 2.0.0  
 **Last Updated**: 01/11/2025  
 **Next Sprint**: Add filters and real-time price updates
