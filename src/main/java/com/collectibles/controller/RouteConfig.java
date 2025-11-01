@@ -9,7 +9,15 @@ import com.collectibles.service.OfferService;
 import com.collectibles.service.UserService;
 import static spark.Spark.*;
 import static spark.Spark.staticFiles;
+import com.collectibles.config.WebSocketConfig;
+import com.collectibles.service.PriceUpdateService;
+import com.collectibles.util.JsonUtil;
+import spark.ModelAndView;
+import spark.Spark;
+import spark.template.mustache.MustacheTemplateEngine;
 
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -25,6 +33,7 @@ public class RouteConfig {
     private final ItemService itemService;
     private final UserService userService;
     private final OfferService offerService;
+    private PriceUpdateService priceUpdateService;
 
 
     /**
@@ -37,6 +46,7 @@ public class RouteConfig {
         this.itemService = itemService;
         this.userService = userService;
         this.offerService = offerService;
+        this.priceUpdateService = new PriceUpdateService(itemService);
     }
 
     /**
@@ -57,14 +67,18 @@ public class RouteConfig {
         // To call error.mustache
         configureExceptionHandlers();
 
+        //configureWebSocket();
+
         // Set up route groups
+        configureTemplateRoutes();
         configureItemRoutes();
         configureUserRoutes();
-        configureTemplateRoutes();
         configureOfferRoutes();
 
         // Set up utility routes
         configureUtilityRoutes();
+
+        configureAdminRoutes();
 
         System.out.println("Routes configured successfully");
     }
@@ -82,6 +96,8 @@ public class RouteConfig {
         port(ServerConfig.getPort());
 
         configureStaticFiles();
+
+        configureWebSocket();
 
         // Enable CORS for all routes
         enableCORS();
@@ -156,38 +172,6 @@ public class RouteConfig {
                 response.header("Cache-Control", ServerConfig.CACHE_CONTROL_NO_CACHE);
             }
         });
-    }
-
-    /**
-     * Configures all routes related to items.
-     * Groups all /items endpoints together.
-     */
-    private void configureItemRoutes() {
-        // Create ItemController instance
-        ItemController itemController = new ItemController(itemService);
-
-        TemplateController templateController = new TemplateController(itemService);
-
-        // GET /items/view - Display items list page
-        get("/items/view", templateController::renderItemsList);
-
-        // Path group for all item-related routes
-        path("/items", () -> {
-            // API ROUTES (JSON responses)
-
-            // GET /items - Retrieve all items as JSON
-            get("", itemController::getAllItems);
-
-            // GET /items/:id - Retrieve specific item as JSON
-            get("/:id", itemController::getItemById);
-
-            // TEMPLATE ROUTES (HTML responses)
-
-            // GET /items/view/:id - Display item details page
-            get("/view/:id", templateController::renderItemDetails);
-        });
-
-        System.out.println("Item routes configured: /items (API + Views)");
     }
 
     /**
@@ -331,10 +315,121 @@ public class RouteConfig {
 
         // Items list view with filtering support
         get("/items/view", templateController::renderItemsList);
-
         // Item details view
         get("/items/view/:id", templateController::renderItemDetails);
 
         System.out.println("Template routes configured: /items/view");
+    }
+
+    /**
+     * Configures all routes related to items.
+     * Groups all /items endpoints together.
+     */
+    private void configureItemRoutes() {
+        // Create ItemController instance
+        ItemController itemController = new ItemController(itemService);
+
+        TemplateController templateController = new TemplateController(itemService);
+
+        // GET /items/view - Display items list page
+        get("/items/view", templateController::renderItemsList);
+
+        // Path group for all item-related routes
+        path("/items", () -> {
+            // API ROUTES (JSON responses)
+
+            // GET /items - Retrieve all items as JSON
+            get("", itemController::getAllItems);
+
+            // GET /items/:id - Retrieve specific item as JSON
+            get("/:id", itemController::getItemById);
+
+            // TEMPLATE ROUTES (HTML responses)
+
+            // GET /items/view/:id - Display item details page
+            get("/view/:id", templateController::renderItemDetails);
+        });
+
+        System.out.println("Item routes configured: /items (API + Views)");
+    }
+    /**
+     * Configures WebSocket endpoint for real-time price updates.
+     */
+    private void configureWebSocket() {
+        // Configure WebSocket
+        Spark.webSocket("/ws/prices", WebSocketConfig.class);
+
+        System.out.println("WebSocket configured at: /ws/prices");
+
+        // Optional: Start automatic price updates for demonstration
+        // Uncomment the line below to enable automatic price changes every 10 seconds
+        // priceUpdateService.startAutoUpdates();
+    }
+    /**
+     * Configures admin routes for testing and management.
+     */
+    private void configureAdminRoutes() {
+        path("/admin", () -> {
+            // Update item price manually
+            post("/update-price/:id", (request, response) -> {
+                String itemId = request.params(":id");
+                String newPrice = request.queryParams("price");
+
+                if (newPrice == null || newPrice.trim().isEmpty()) {
+                    response.status(400);
+                    Map<String, Object> errorMap = new HashMap<>();
+                    errorMap.put("error", "Price parameter is required");
+                    return JsonUtil.toJson(errorMap);
+                }
+
+                boolean success = priceUpdateService.updateItemPrice(itemId, newPrice);
+
+                if (success) {
+                    response.status(200);
+                    Map<String, Object> resultMap = new HashMap<>();
+                    resultMap.put("success", true);
+                    resultMap.put("message", "Price updated and broadcasted");
+                    resultMap.put("itemId", itemId);
+                    resultMap.put("newPrice", newPrice);
+                    return JsonUtil.toJson(resultMap);
+                } else {
+                    response.status(404);
+                    Map<String, Object> statusMap = new HashMap<>();
+                    statusMap.put("erro", "Item was not found");
+                    return JsonUtil.toJson(statusMap);
+                }
+            });
+
+            // Toggle auto-updates
+            post("/auto-updates/toggle", (request, response) -> {
+                if (priceUpdateService.isAutoUpdateEnabled()) {
+                    priceUpdateService.stopAutoUpdates();
+                    Map<String, Object> statusMap = new HashMap<>();
+                    statusMap.put("status", "stopped");
+                    return JsonUtil.toJson(statusMap);
+                } else {
+                    priceUpdateService.startAutoUpdates();
+                    Map<String, Object> statusMap = new HashMap<>();
+                    statusMap.put("status", "started");
+                    return JsonUtil.toJson(statusMap);
+                }
+            });
+
+            // Get WebSocket stats
+            get("/ws-stats", (request, response) -> {
+                Map<String, Object> statsMap = new HashMap<>();
+                statsMap.put("connections", WebSocketConfig.getConnectionCount());
+                statsMap.put("autoUpdates", priceUpdateService.isAutoUpdateEnabled());
+                return JsonUtil.toJson(statsMap);
+            });
+            get("", (request, response) -> {
+                Map<String, Object> model = new HashMap<>();
+                return new MustacheTemplateEngine().render(
+                        new ModelAndView(model, "admin-price-update.mustache")
+                );
+            });
+        });
+
+        System.out.println("Admin routes configured: /admin/*");
     }
 }

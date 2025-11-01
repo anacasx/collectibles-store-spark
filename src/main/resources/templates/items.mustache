@@ -5,12 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Collectibles Store - Items</title>
     <link rel="stylesheet" href="/css/styles.css">
+
+    <style>
+        /* WebSocket status indicator */
+        .ws-status {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .ws-status.success { background-color: #28a745; color: white; }
+        .ws-status.warning { background-color: #ffc107; color: #333; }
+        .ws-status.error { background-color: #dc3545; color: white; }
+
+        /* Price update animations */
+        .price-updating { animation: pulse 0.3s ease-in-out; }
+        .price-updated { animation: highlight 2s ease-in-out; }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        @keyframes highlight {
+            0% { background-color: #fff3cd; }
+            100% { background-color: transparent; }
+        }
+
+        /* Price update notification */
+        .price-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 4px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease-in-out;
+            z-index: 1000;
+        }
+        .price-notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
 </head>
 <body>
-<div class="container">
+<div id="ws-status" class="ws-status">Connecting...</div>
+
+<div class="container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
     <h1>Collectibles Store</h1>
 
-    <!-- Price Filter Section -->
     <div class="filter-container">
         <h2>Filter by Price</h2>
         <form id="filter-form" method="GET" action="/items/view">
@@ -57,17 +108,16 @@
         {{/hasFilters}}
     </div>
 
-    <!-- Items List Section -->
     <div class="items-section">
         <h2>Available Items ({{itemCount}})</h2>
 
         {{#items}}
-            <div class="list-item">
+            <div class="list-item" data-item-id="{{id}}">
                 <div class="item-info">
                     <span class="item-name">
                         <a href="/items/view/{{id}}" class="item-name-link">{{name}}</a>
                     </span>
-                    <span class="item-price">{{price}}</span>
+                    <span class="item-price" data-item-id="{{id}}">{{price}}</span>
                 </div>
             </div>
         {{/items}}
@@ -86,5 +136,131 @@
 </div>
 
 <script src="/js/script.js"></script>
+
+<script>
+    // WebSocket connection for real-time price updates
+    (function() {
+        let ws = null;
+        let reconnectAttempts = 0;
+        const maxReconnectAttempts = 5;
+        const reconnectDelay = 3000; // 3 seconds
+
+        function connectWebSocket() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = protocol + '//' + window.location.host + '/ws/prices';
+            console.log('Connecting to WebSocket:', wsUrl);
+
+            try {
+                ws = new WebSocket(wsUrl);
+
+                ws.onopen = function(event) {
+                    console.log('WebSocket connected');
+                    reconnectAttempts = 0;
+                    showConnectionStatus('Connected', 'success');
+                };
+
+                ws.onmessage = function(event) {
+                    console.log('WebSocket message received:', event.data);
+                    try {
+                        const data = JSON.parse(event.data);
+                        handleWebSocketMessage(data);
+                    } catch (error) {
+                        console.error('Error parsing WebSocket message:', error);
+                    }
+                };
+
+                ws.onerror = function(error) {
+                    console.error('WebSocket error:', error);
+                    showConnectionStatus('Error', 'error');
+                };
+
+                ws.onclose = function(event) {
+                    console.log('WebSocket closed:', event.code, event.reason);
+                    showConnectionStatus('Disconnected', 'warning');
+                    if (reconnectAttempts < maxReconnectAttempts) {
+                        reconnectAttempts++;
+                        console.log('Reconnecting... Attempt', reconnectAttempts);
+                        setTimeout(connectWebSocket, reconnectDelay);
+                    } else {
+                        console.log('Max reconnect attempts reached');
+                        showConnectionStatus('Connection lost', 'error');
+                    }
+                };
+            } catch (error) {
+                console.error('Error creating WebSocket:', error);
+            }
+        }
+
+        function handleWebSocketMessage(data) {
+            switch(data.type) {
+                case 'connection':
+                    console.log('Connection confirmed:', data.message);
+                    break;
+                case 'priceUpdate':
+                    updateItemPrice(data.itemId, data.newPrice, data.oldPrice);
+                    break;
+                case 'echo':
+                    console.log('Echo received:', data.message);
+                    break;
+                default:
+                    console.log('Unknown message type:', data.type);
+            }
+        }
+
+        function updateItemPrice(itemId, newPrice, oldPrice) {
+            console.log('Updating price for item', itemId, ':', oldPrice, '->', newPrice);
+            // Busca el elemento de precio usando el data-item-id
+            const priceElement = document.querySelector('[data-item-id="' + itemId + '"] .item-price');
+
+            if (priceElement) {
+                priceElement.classList.add('price-updating');
+                setTimeout(function() {
+                    priceElement.textContent = newPrice;
+                    priceElement.classList.remove('price-updating');
+                    priceElement.classList.add('price-updated');
+                    setTimeout(function() {
+                        priceElement.classList.remove('price-updated');
+                    }, 2000);
+                }, 300);
+                showPriceUpdateNotification(itemId, newPrice, oldPrice);
+            } else {
+                console.warn('Price element not found for item:', itemId);
+            }
+        }
+
+        function showPriceUpdateNotification(itemId, newPrice, oldPrice) {
+            const notification = document.createElement('div');
+            notification.className = 'price-notification';
+            notification.innerHTML = 'Price updated for item ' + itemId + ': ' + oldPrice + ' → ' + newPrice;
+            document.body.appendChild(notification);
+            setTimeout(function() {
+                notification.classList.add('show');
+            }, 100);
+            setTimeout(function() {
+                notification.classList.remove('show');
+                setTimeout(function() {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        function showConnectionStatus(message, type) {
+            const statusElement = document.getElementById('ws-status');
+            if (statusElement) {
+                statusElement.textContent = message;
+                statusElement.className = 'ws-status ' + type;
+            }
+        }
+
+        // Connect on page load
+        connectWebSocket();
+
+        window.addEventListener('beforeunload', function() {
+            if (ws) {
+                ws.close();
+            }
+        });
+    })();
+</script>
 </body>
 </html>

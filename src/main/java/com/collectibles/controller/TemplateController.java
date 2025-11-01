@@ -114,7 +114,10 @@ public class TemplateController {
         }
 
         Map<String, Object> model = new HashMap<>();
-        model.put("item", item);
+        model.put("id", item.getId());
+        model.put("name", item.getName());
+        model.put("description", item.getDescription());
+        model.put("price", item.getPrice());
 
         response.status(200);
         response.type("text/html");

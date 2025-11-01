@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Admin - Price Updates</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        h1 { color: #333; }
+        .section {
+            background: #f8f9fa;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 8px;
+        }
+        button:hover { background-color: #0056b3; }
+        .stats { background-color: #e9ecef; padding: 15px; border-radius: 4px; }
+        .message { padding: 10px; margin-top: 10px; border-radius: 4px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+<h1>Admin - Price Update Control Panel</h1>
+
+<div class="section">
+    <h2>WebSocket Statistics</h2>
+    <div class="stats" id="stats">Loading...</div>
+    <button id="refreshStatsBtn">Refresh Stats</button>
+</div>
+
+<div class="section">
+    <h2>Manual Price Update</h2>
+    <div class="form-group">
+        <label for="itemId">Item ID:</label>
+        <select id="itemId">
+            <option value="item1">item1 - Gorra Peso Pluma</option>
+            <option value="item2">item2 - Casco Rosalía</option>
+            <option value="item3">item3 - Chamarra Bad Bunny</option>
+            <option value="item4">item4 - Guitarra Fernando Delgadillo</option>
+            <option value="item5">item5 - Jersey Snoop Dogg</option>
+            <option value="item6">item6 - Prenda Cardi B</option>
+            <option value="item7">item7 - Guitarra Coldplay</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="newPrice">New Price (numeric or formatted):</label>
+        <input type="text" id="newPrice" placeholder="$500.00 USD" value="$500.00 USD" />
+    </div>
+
+    <button id="updatePriceBtn">Update Price</button>
+
+    <div id="updateMessage"></div>
+</div>
+
+<div class="section">
+    <h2>Automatic Price Updates</h2>
+    <p>Toggle automatic price updates (changes prices every 10 seconds)</p>
+    <button id="toggleAutoBtn">Start Auto-Updates</button>
+    <div id="autoUpdateMessage"></div>
+</div>
+
+<div class="section">
+    <a href="/items/view">← Back to Items List</a>
+</div>
+
+<script>
+    (function () {
+        const statsEl = document.getElementById('stats');
+        const updateMessageEl = document.getElementById('updateMessage');
+        const autoUpdateMessageEl = document.getElementById('autoUpdateMessage');
+        const refreshBtn = document.getElementById('refreshStatsBtn');
+        const updateBtn = document.getElementById('updatePriceBtn');
+        const toggleAutoBtn = document.getElementById('toggleAutoBtn');
+
+        let autoUpdateIntervalId = null;
+        let autoUpdatesEnabled = false;
+        const AUTO_UPDATE_INTERVAL_MS = 10000; // 10s
+
+        function renderStats(data) {
+            statsEl.innerHTML =
+                    '<p><strong>Active WebSocket Connections:</strong> ' + (data.connections ?? 0) + '</p>' +
+                    '<p><strong>Auto-Updates:</strong> ' + (data.autoUpdates ? 'Enabled' : 'Disabled') + '</p>';
+        }
+
+        function refreshStats() {
+            fetch('/admin/ws-stats')
+                    .then(response => {
+                        if (!response.ok) throw new Error('Status ' + response.status);
+                        return response.json();
+                    })
+                    .then(data => {
+                        renderStats(data);
+                    })
+                    .catch(error => {
+                        statsEl.innerHTML = '<p class="message error">Error loading stats: ' + error + '</p>';
+                    });
+        }
+
+        function updatePrice() {
+            const itemId = document.getElementById('itemId').value;
+            const newPriceRaw = document.getElementById('newPrice').value;
+
+            // Optional: normalize price (try to extract numeric value)
+            const numericMatch = newPriceRaw.replace(',', '.').match(/-?\d+(\.\d+)?/);
+            const priceParam = numericMatch ? numericMatch[0] : newPriceRaw;
+
+            updateMessageEl.innerHTML = '<div class="message">Sending update...</div>';
+
+            fetch('/admin/update-price/' + encodeURIComponent(itemId) + '?price=' + encodeURIComponent(priceParam), {
+                method: 'POST'
+            })
+                    .then(response => {
+                        if (!response.ok) return response.json().then(j => { throw new Error(j.message || ('Status ' + response.status)); });
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            updateMessageEl.innerHTML = '<div class="message success">Price updated successfully. Server status: ' + (data.status ?? 'ok') + '</div>';
+                            // refresh stats to show any change
+                            refreshStats();
+                        } else {
+                            updateMessageEl.innerHTML = '<div class="message error">Update failed: ' + (data.message || 'Unknown error') + '</div>';
+                        }
+                    })
+                    .catch(error => {
+                        updateMessageEl.innerHTML = '<div class="message error">Error updating price: ' + error.message + '</div>';
+                    });
+        }
+
+        function toggleAutoUpdates() {
+            if (!autoUpdatesEnabled) {
+                // Start auto updates
+                fetch('/admin/auto-updates/start', { method: 'POST' })
+                        .then(response => {
+                            if (!response.ok) return response.json().then(j => { throw new Error(j.message || ('Status ' + response.status)); });
+                            return response.json();
+                        })
+                        .then(data => {
+                            autoUpdatesEnabled = true;
+                            toggleAutoBtn.textContent = 'Stop Auto-Updates';
+                            autoUpdateMessageEl.innerHTML = '<div class="message success">Auto-updates started.</div>';
+                            // Start local interval to refresh stats (UI only)
+                            if (!autoUpdateIntervalId) {
+                                autoUpdateIntervalId = setInterval(refreshStats, AUTO_UPDATE_INTERVAL_MS);
+                            }
+                            refreshStats();
+                        })
+                        .catch(error => {
+                            autoUpdateMessageEl.innerHTML = '<div class="message error">Could not start auto-updates: ' + error.message + '</div>';
+                        });
+            } else {
+                // Stop auto updates
+                fetch('/admin/auto-updates/stop', { method: 'POST' })
+                        .then(response => {
+                            if (!response.ok) return response.json().then(j => { throw new Error(j.message || ('Status ' + response.status)); });
+                            return response.json();
+                        })
+                        .then(data => {
+                            autoUpdatesEnabled = false;
+                            toggleAutoBtn.textContent = 'Start Auto-Updates';
+                            autoUpdateMessageEl.innerHTML = '<div class="message success">Auto-updates stopped.</div>';
+                            if (autoUpdateIntervalId) {
+                                clearInterval(autoUpdateIntervalId);
+                                autoUpdateIntervalId = null;
+                            }
+                            refreshStats();
+                        })
+                        .catch(error => {
+                            autoUpdateMessageEl.innerHTML = '<div class="message error">Could not stop auto-updates: ' + error.message + '</div>';
+                        });
+            }
+        }
+
+        // Event listeners
+        refreshBtn.addEventListener('click', refreshStats);
+        updateBtn.addEventListener('click', updatePrice);
+        toggleAutoBtn.addEventListener('click', toggleAutoUpdates);
+
+        // Initial load
+        refreshStats();
+
+        // Optional: keep UI stats refreshed even if auto-updates not enabled on server
+        setInterval(refreshStats, 5000);
+    })();
+</script>
+</body>
+</html>
