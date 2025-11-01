@@ -3,44 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Collectibles Store - Items Catalog</title>
+    <title>Collectibles Store - Items</title>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-<div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
-    <h1>Collectibles Store - Items Catalog</h1>
+<div class="container">
+    <h1>Collectibles Store</h1>
 
-    <p>Browse our collection of exclusive collectible items. Click on any item to see more details.</p>
+    <!-- Price Filter Section -->
+    <div class="filter-container">
+        <h2>Filter by Price</h2>
+        <form id="filter-form" method="GET" action="/items/view">
+            <div class="filter-controls">
+                <div class="filter-item">
+                    <label for="minPrice">Min Price ($):</label>
+                    <input
+                            type="number"
+                            id="minPrice"
+                            name="minPrice"
+                            min="0"
+                            step="0.01"
+                            {{#minPrice}}value="{{minPrice}}"{{/minPrice}}
+                            placeholder="{{overallMinPrice}}"
+                    >
+                </div>
 
-    {{#hasItems}}
-        <table id="item-list-table">
-            <thead>
-            <tr>
-                <th>Item Name</th>
-                <th>Price</th>
-            </tr>
-            </thead>
-            <tbody>
-            {{#items}}
-                <tr>
-                    <td>
-                        <a href="/items/{{id}}" class="item-name-link">{{name}}</a>
-                    </td>
-                    <td>{{price}}</td>
-                </tr>
-            {{/items}}
-            </tbody>
-        </table>
-    {{/hasItems}}
+                <div class="filter-item">
+                    <label for="maxPrice">Max Price ($):</label>
+                    <input
+                            type="number"
+                            id="maxPrice"
+                            name="maxPrice"
+                            min="0"
+                            step="0.01"
+                            {{#maxPrice}}value="{{maxPrice}}"{{/maxPrice}}
+                            placeholder="{{overallMaxPrice}}"
+                    >
+                </div>
 
-    {{^hasItems}}
-        <p style="text-align: center; color: #666; margin-top: 40px;">
-            No items available at this time. Please check back later.
-        </p>
-    {{/hasItems}}
+                <div class="filter-buttons">
+                    <button type="submit" class="btn btn-primary">Apply Filter</button>
+                    <a href="/items/view" class="btn btn-secondary">Clear Filter</a>
+                </div>
+            </div>
+        </form>
 
-    <div style="margin-top: 30px; text-align: center;">
-        <a href="/">Back to API Home</a>
+        {{#hasFilters}}
+            <div class="filter-info">
+                Showing {{itemCount}} items
+                {{#minPrice}}with minimum price ${{minPrice}}{{/minPrice}}
+                {{#maxPrice}}and maximum price ${{maxPrice}}{{/maxPrice}}
+            </div>
+        {{/hasFilters}}
+    </div>
+
+    <!-- Items List Section -->
+    <div class="items-section">
+        <h2>Available Items ({{itemCount}})</h2>
+
+        {{#items}}
+            <div class="list-item">
+                <div class="item-info">
+                    <span class="item-name">
+                        <a href="/items/view/{{id}}" class="item-name-link">{{name}}</a>
+                    </span>
+                    <span class="item-price">{{price}}</span>
+                </div>
+            </div>
+        {{/items}}
+
+        {{^items}}
+            <div class="no-items">
+                <p>No items found matching your filter criteria.</p>
+                <a href="/items/view" class="btn">Show All Items</a>
+            </div>
+        {{/items}}
+    </div>
+
+    <div class="footer">
+        <p><a href="/">Back to Home</a></p>
     </div>
 </div>
 

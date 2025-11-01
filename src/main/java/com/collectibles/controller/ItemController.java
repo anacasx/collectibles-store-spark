@@ -33,16 +33,55 @@ public class ItemController {
     }
 
     /**
-     * Handles GET /items request to retrieve all items.
+     * Handles GET /items request to retrieve all items with optional price filtering.
+     * Supports query parameters: minPrice and maxPrice
      *
      * @param request Spark request object
      * @param response Spark response object
-     * @return JSON string containing all items
+     * @return JSON string containing filtered items
      */
     public String getAllItems(Request request, Response response) {
         try {
-            // Get all items from service
-            List<Item> items = itemService.getAllItems();
+            // Parse query parameters
+            String minPriceParam = request.queryParams("minPrice");
+            String maxPriceParam = request.queryParams("maxPrice");
+
+            Double minPrice = null;
+            Double maxPrice = null;
+
+            // Parse minPrice parameter
+            if (minPriceParam != null && !minPriceParam.trim().isEmpty()) {
+                try {
+                    minPrice = Double.parseDouble(minPriceParam);
+                } catch (NumberFormatException e) {
+                    response.status(400);
+                    return createErrorResponse("Invalid minPrice parameter: must be a number");
+                }
+            }
+
+            // Parse maxPrice parameter
+            if (maxPriceParam != null && !maxPriceParam.trim().isEmpty()) {
+                try {
+                    maxPrice = Double.parseDouble(maxPriceParam);
+                } catch (NumberFormatException e) {
+                    response.status(400);
+                    return createErrorResponse("Invalid maxPrice parameter: must be a number");
+                }
+            }
+
+            // Validate price range
+            if (minPrice != null && maxPrice != null && minPrice > maxPrice) {
+                response.status(400);
+                return createErrorResponse("minPrice cannot be greater than maxPrice");
+            }
+
+            // Get items with optional filtering
+            List<Item> items;
+            if (minPrice != null || maxPrice != null) {
+                items = itemService.getItemsByPriceRange(minPrice, maxPrice);
+            } else {
+                items = itemService.getAllItems();
+            }
 
             // Set response status and type
             response.status(200);

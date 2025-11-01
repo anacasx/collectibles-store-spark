@@ -2,6 +2,7 @@ package com.collectibles.service;
 
 import com.collectibles.model.Item;
 import com.collectibles.util.JsonUtil;
+import com.collectibles.util.PriceUtil;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
@@ -143,5 +144,48 @@ public class ItemService {
      */
     public void clearAllItems() {
         itemsMap.clear();
+    }
+
+    /**
+     * Retrieves items filtered by price range.
+     *
+     * @param minPrice Minimum price (inclusive), null for no minimum
+     * @param maxPrice Maximum price (inclusive), null for no maximum
+     * @return List of items within the specified price range
+     */
+    public List<Item> getItemsByPriceRange(Double minPrice, Double maxPrice) {
+        // If no filters specified, return all items
+        if (minPrice == null && maxPrice == null) {
+            return getAllItems();
+        }
+
+        // Filter items by price range
+        return itemsMap.values().stream()
+                .filter(item -> PriceUtil.isPriceInRange(item.getPrice(), minPrice, maxPrice))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets the minimum price from all items.
+     *
+     * @return The minimum price value
+     */
+    public double getMinPrice() {
+        return itemsMap.values().stream()
+                .mapToDouble(item -> PriceUtil.parsePrice(item.getPrice()))
+                .min()
+                .orElse(0.0);
+    }
+
+    /**
+     * Gets the maximum price from all items.
+     *
+     * @return The maximum price value
+     */
+    public double getMaxPrice() {
+        return itemsMap.values().stream()
+                .mapToDouble(item -> PriceUtil.parsePrice(item.getPrice()))
+                .max()
+                .orElse(0.0);
     }
 }

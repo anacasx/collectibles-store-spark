@@ -60,6 +60,7 @@ public class RouteConfig {
         // Set up route groups
         configureItemRoutes();
         configureUserRoutes();
+        configureTemplateRoutes();
         configureOfferRoutes();
 
         // Set up utility routes
@@ -165,7 +166,7 @@ public class RouteConfig {
         // Create ItemController instance
         ItemController itemController = new ItemController(itemService);
 
-        TemplateController templateController = new TemplateController(itemService, offerService);
+        TemplateController templateController = new TemplateController(itemService);
 
         // GET /items/view - Display items list page
         get("/items/view", templateController::renderItemsList);
@@ -183,7 +184,7 @@ public class RouteConfig {
             // TEMPLATE ROUTES (HTML responses)
 
             // GET /items/view/:id - Display item details page
-            get("/view/:id", templateController::renderItemDetail);
+            get("/view/:id", templateController::renderItemDetails);
         });
 
         System.out.println("Item routes configured: /items (API + Views)");
@@ -322,5 +323,18 @@ public class RouteConfig {
         System.out.println("Offer routes configured: /offers");
     }
 
+    /**
+     * Configures template-based routes for HTML pages.
+     */
+    private void configureTemplateRoutes() {
+        TemplateController templateController = new TemplateController(itemService);
 
+        // Items list view with filtering support
+        get("/items/view", templateController::renderItemsList);
+
+        // Item details view
+        get("/items/view/:id", templateController::renderItemDetails);
+
+        System.out.println("Template routes configured: /items/view");
+    }
 }
