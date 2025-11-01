@@ -69,8 +69,14 @@ curl http://localhost:4567/items
 - `GET /health` - Health check
 
 ### Items Endpoints
-- `GET /items` - Get all collectible items
-- `GET /items/:id` - Get specific item by ID
+- `GET /items/view` - Get all collectible items
+- `GET /items/view/:id` - Get specific item by ID
+
+### Offers Endpoints
+- `GET /offers/form` - Offer submission form
+- `GET /offers/view` - Get all offers received
+- `POST /offers` - Submit offer
+- `GET /offers` - Get offers (JSON API)
 
 ### Users Endpoints
 - `GET /users` - Get all users
@@ -219,7 +225,7 @@ curl -X DELETE http://localhost:4567/users/user10
 
 ##  Features
 
-### Current (Sprint 1)
+### Sprint 1
 -  RESTful API architecture
 -  JSON request/response format
 -  Full CRUD for users
@@ -229,11 +235,16 @@ curl -X DELETE http://localhost:4567/users/user10
 -  CORS support for browsers
 -  Request logging
 
-### Planned (Sprint 2)
--  Mustache templates for web views
--  Exception handling module (404, 500 pages)
--  Web forms for offer submission
--  Enhanced error pages
+### Current (Sprint 2)
+-  Web templates with Mustache
+-  Visual items catalog
+-  Item details pages
+-  Offer submission system
+-  Offers management
+-  User-friendly error pages
+-  CSS styling integrated
+-  JavaScript functionality
+-  Form handling
 
 ### Planned (Sprint 3)
 -  Price range filtering
