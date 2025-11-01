@@ -32,7 +32,7 @@ Rafael, a recent Systems Engineering graduate, is developing a website for his f
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/ramsalue/collectibles-store-spark.git
+git clone https://github.com/anacasx/collectibles-store-spark.git
 cd collectibles-store-spark
 ```
 
@@ -86,7 +86,7 @@ curl http://localhost:4567/items
 - `DELETE /users/:id` - Delete user
 - `OPTIONS /users/:id` - Check if user exists
 
-**Total Endpoints**: 10
+**Total Endpoints**: 14
 
 ---
 
@@ -97,30 +97,57 @@ collectibles-store-spark/
 ├── src/
 │   └── main/
 │       ├── java/com/collectibles/
-│       │   ├── Main.java                    # Application entry point
-│       │   ├── config/
-│       │   │   └── ServerConfig.java        # Configuration constants
 │       │   ├── controller/
-│       │   │   ├── ItemController.java      # Items HTTP handlers
-│       │   │   ├── UserController.java      # Users HTTP handlers
-│       │   │   └── RouteConfig.java         # Route configuration
+│       │   │   └── UserController.java       # Handles user routes.
+│       │   │
+│       │   ├── exception/
+│       │   │   ├── ExceptionHandler.java     # Global error handler.
+│       │   │   ├── NotFoundException.java    # 404 exception.
+│       │   │   └── ServerException.java      # Server error exception.
+│       │   │
 │       │   ├── model/
-│       │   │   ├── Item.java                # Item entity
-│       │   │   └── User.java                # User entity
+│       │   │   ├── Item.java                 # Item entity.
+│       │   │   ├── Offer.java                # Offer entity.
+│       │   │   └── User.java                 # User entity.
+│       │   │
 │       │   ├── service/
-│       │   │   ├── ItemService.java         # Items business logic
-│       │   │   └── UserService.java         # Users business logic
+│       │   │   ├── ItemService.java          # Item logic.
+│       │   │   ├── OfferService.java         # Offer logic.
+│       │   │   └── UserService.java          # User logic.
+│       │   │
 │       │   └── util/
-│       │       └── JsonUtil.java            # JSON utilities
-│       └── resources/
-│           ├── data/
-│           │   └── items.json               # Collectibles data
-│           └── logback.xml                  # Logging configuration
-├── docs/                                    # Complete documentation
-├── postman/                                 # Postman collection
-├── screenshots/                             # Testing screenshots
-├── pom.xml                                  # Maven configuration
-└── README.md                                # This file
+│       │       ├── JsonUtil.java             # JSON helper.
+│       │       └── Main.java                 # App entry point.
+│       │
+│       ├── resources/
+│       │   ├── data/
+│       │   │   └── items.json                # Sample data.
+│       │   │
+│       │   ├── public/
+│       │   │   ├── css/
+│       │   │   │   ├── styles-forms.css      # Form styles.
+│       │   │   │   └── styles.css            # Global styles.
+│       │   │   ├── js/
+│       │   │   │   ├── offer-form.js         # Offer form script.
+│       │   │   │   └── scripts.js            # Main JS.
+│       │   │
+│       │   └── templates/
+│       │       ├── error.mustache            # Error page.
+│       │       ├── item-detail.mustache      # Item view.
+│       │       ├── items.mustache            # Items list.
+│       │       ├── offer-form.mustache       # Offer form.
+│       │       └── offers-list.mustache      # Offers list.
+│       │
+│       └── logback.xml                       # Logging setup.
+│
+├── test/                                     # Tests.
+├── target/                                   # Build output.
+├── docs/                                     # Documentation.
+├── postman/                                  # Postman collection.
+├── screenshots/                              # Testing screenshots.
+├── .gitignore
+├── pom.xml                                   # Maven config.
+└── README.md                                 # Project info.
 ```
 
 ---
@@ -355,14 +382,14 @@ This project is part of the Digital NAO Backend Developer Certification program.
 
 ## Version History
 
-### Version 1.0.0 (Sprint 1) - Current
+### Version 1.0.0 (Sprint 1)
 - Initial API implementation
 - Items and Users endpoints
 - CORS configuration
 - Complete documentation
 - Postman test collection
 
-### Upcoming (Sprint 2)
+### Version 2.0.0 (Sprint 2) - Current
 - Templates with Mustache
 - Exception handling
 - Web forms
@@ -381,15 +408,15 @@ This project is part of the Digital NAO Backend Developer Certification program.
 ## Project Status
 
 **Sprint 1**: COMPLETE  
-**Current Version**: 1.0.0  
-**Last Updated**: 27/10/2025  
-**Next Sprint**: Templates and Exception Handling
+**Current Version**: 2.0.0  
+**Last Updated**: 01/11/2025  
+**Next Sprint**: Add filters and real-time price updates
 
 ---
 
 ## Quick Links
 
-- [GitHub Repository](https://github.com/ramsalue/collectibles-store-spark)
+- [GitHub Repository](https://github.com/anacasx/collectibles-store-spark)
 - [API Documentation](docs/API_DOCUMENTATION.md)
 - [Quick Start Guide](docs/QUICK_START.md)
 - [Postman Collection](postman/)
