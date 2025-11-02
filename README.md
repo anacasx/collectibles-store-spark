@@ -1,6 +1,7 @@
-# Collectibles Store API - Sprint 1
+# Collectibles Store API - Sprint 2: Templates & Exception Handling
 
-A RESTful API service for managing collectible items and users, built with Java and Spark Framework as part of the Digital NAO Backend Developer Certification program.
+A RESTful and template-based web application built with Java and Spark Framework as part of the Digital NAO Backend Developer Certification.  
+This sprint completes the integration of exception handling, Mustache templates, and offer management features.
 
 ---
 
@@ -9,7 +10,7 @@ A RESTful API service for managing collectible items and users, built with Java 
 ### Challenge Context
 Rafael, a recent Systems Engineering graduate, is developing a website for his friend Ramon to sell collectible items online. This API serves as the backend foundation for the collectibles marketplace, enabling item browsing and user management through RESTful endpoints.
 
-### Sprint 1 Deliverables
+### Sprint 1
 -  Complete REST API with 10 endpoints
 -  Items catalog management (7 collectibles)
 -  Full CRUD operations for users
@@ -17,6 +18,14 @@ Rafael, a recent Systems Engineering graduate, is developing a website for his f
 -  CORS-enabled for web applications
 -  Comprehensive documentation
 -  Postman test collection (45 tests)
+
+### Sprint 2
+-  Implemented exception handling module (404 & 500)
+-  Configured Mustache template engine
+-  Created items and offers templates
+-  Integrated CSS and JS from instructor package
+-  Implemented offer submission and viewing workflow
+-  Ensured backward compatibility with API endpoints
 
 ---
 
@@ -410,7 +419,7 @@ This project is part of the Digital NAO Backend Developer Certification program.
 **Sprint 2**: COMPLETE  
 **Current Version**: 2.0.0  
 **Last Updated**: 01/11/2025  
-**Next Sprint**: Add filters and real-time price updates
+**Next Sprint**: Price Filtering & WebSocket Integration
 
 ---
 
