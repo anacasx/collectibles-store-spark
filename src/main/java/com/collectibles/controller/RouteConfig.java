@@ -163,7 +163,7 @@ public class RouteConfig {
 
             // Add cache control based on method
             if (request.requestMethod().equals("GET")) {
-                if (request.pathInfo().startsWith("/items")) {
+                if (request.pathInfo().equals("/items")) {
                     response.header("Cache-Control", ServerConfig.CACHE_CONTROL_PUBLIC);
                 } else {
                     response.header("Cache-Control", ServerConfig.CACHE_CONTROL_NO_CACHE);
