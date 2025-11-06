@@ -2,8 +2,6 @@ package com.collectibles.service;
 
 import com.collectibles.config.WebSocketConfig;
 import com.collectibles.model.Item;
-//import com.sun.tools.javac.jvm.Items;
-import java.util.List;
 
 import java.util.List;
 import java.util.Random;
@@ -15,7 +13,7 @@ import java.util.TimerTask;
  * Provides methods to update item prices and notify connected clients via WebSocket.
  *
  * @author Rafael
- * @version 1.0.0
+ * @version 2.0.0
  */
 public class PriceUpdateService {
 
@@ -34,12 +32,13 @@ public class PriceUpdateService {
 
     /**
      * Updates the price of a specific item and broadcasts the change.
+     * Accepts price as String for API compatibility.
      *
      * @param itemId The ID of the item to update
-     * @param newPrice The new price value
+     * @param newPriceStr The new price value as string
      * @return true if update was successful, false otherwise
      */
-    public boolean updateItemPrice(String itemId, String newPrice) {
+    public boolean updateItemPrice(String itemId, String newPriceStr) {
         Item item = itemService.getItemById(itemId);
 
         if (item == null) {
@@ -47,13 +46,41 @@ public class PriceUpdateService {
             return false;
         }
 
-        String oldPrice = item.getPrice();
+        try {
+            double newPrice = Double.parseDouble(newPriceStr);
+            return updateItemPrice(itemId, newPrice);
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid price format: " + newPriceStr);
+            return false;
+        }
+    }
+
+    /**
+     * Updates the price of a specific item and broadcasts the change.
+     *
+     * @param itemId The ID of the item to update
+     * @param newPrice The new price value
+     * @return true if update was successful, false otherwise
+     */
+    public boolean updateItemPrice(String itemId, double newPrice) {
+        Item item = itemService.getItemById(itemId);
+
+        if (item == null) {
+            System.err.println("Cannot update price: Item not found with ID " + itemId);
+            return false;
+        }
+
+        double oldPrice = item.getPrice();
         item.setPrice(newPrice);
 
-        // Broadcast the update to all connected WebSocket clients
-        WebSocketConfig.broadcastPriceUpdate(itemId, newPrice, oldPrice);
+        // Format prices for broadcast
+        String newPriceStr = formatPrice(newPrice);
+        String oldPriceStr = formatPrice(oldPrice);
 
-        System.out.println("Price updated for item " + itemId + ": " + oldPrice + " -> " + newPrice);
+        // Broadcast the update to all connected WebSocket clients
+        WebSocketConfig.broadcastPriceUpdate(itemId, newPriceStr, oldPriceStr);
+
+        System.out.println("Price updated for item " + itemId + ": " + oldPriceStr + " -> " + newPriceStr);
 
         return true;
     }
@@ -109,9 +136,8 @@ public class PriceUpdateService {
             Random random = new Random();
             Item randomItem = items.get(random.nextInt(items.size()));
 
-            // Parse current price
-            String currentPriceStr = randomItem.getPrice();
-            double currentPrice = parsePriceToDouble(currentPriceStr);
+            // Get current price
+            double currentPrice = randomItem.getPrice();
 
             // Calculate new price (+/- 5-15%)
             double changePercent = 0.05 + (random.nextDouble() * 0.10); // 5% to 15%
@@ -123,28 +149,17 @@ public class PriceUpdateService {
 
             double newPrice = currentPrice + change;
 
-            // Format new price
-            String newPriceStr = formatPrice(newPrice);
+            // Ensure price doesn't go below $1
+            if (newPrice < 1.0) {
+                newPrice = 1.0;
+            }
 
             // Update the price
-            updateItemPrice(randomItem.getId(), newPriceStr);
+            updateItemPrice(randomItem.getId(), newPrice);
 
         } catch (Exception e) {
             System.err.println("Error in random price update: " + e.getMessage());
         }
-    }
-
-    /**
-     * Parses a price string to double value.
-     * Example: "$621.34 USD" -> 621.34
-     *
-     * @param priceStr The price string
-     * @return The price as double
-     */
-    private double parsePriceToDouble(String priceStr) {
-        // Remove "$", "USD", and spaces
-        String cleaned = priceStr.replaceAll("[^0-9.]", "");
-        return Double.parseDouble(cleaned);
     }
 
     /**

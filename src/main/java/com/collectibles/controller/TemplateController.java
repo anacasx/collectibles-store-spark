@@ -2,7 +2,6 @@ package com.collectibles.controller;
 
 import com.collectibles.model.Item;
 import com.collectibles.service.ItemService;
-import com.collectibles.util.PriceUtil;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
@@ -17,7 +16,7 @@ import java.util.Map;
  * Renders HTML pages using Mustache templates with filtering support.
  *
  * @author Rafael
- * @version 1.0.0
+ * @version 2.0.0
  */
 public class TemplateController {
 
@@ -118,6 +117,7 @@ public class TemplateController {
         model.put("name", item.getName());
         model.put("description", item.getDescription());
         model.put("price", item.getPrice());
+        model.put("formattedPrice", item.getFormattedPrice());
 
         response.status(200);
         response.type("text/html");

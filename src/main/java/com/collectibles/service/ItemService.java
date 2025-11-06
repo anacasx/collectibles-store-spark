@@ -2,7 +2,6 @@ package com.collectibles.service;
 
 import com.collectibles.model.Item;
 import com.collectibles.util.JsonUtil;
-import com.collectibles.util.PriceUtil;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
@@ -17,7 +16,7 @@ import java.util.stream.Collectors;
  * loading from JSON, CRUD operations, and searching.
  *
  * @author Rafael
- * @version 1.0.0
+ * @version 2.0.0
  */
 public class ItemService {
 
@@ -161,18 +160,23 @@ public class ItemService {
 
         // Filter items by price range
         return itemsMap.values().stream()
-                .filter(item -> PriceUtil.isPriceInRange(item.getPrice(), minPrice, maxPrice))
+                .filter(item -> {
+                    double itemPrice = item.getPrice();
+                    boolean meetsMin = minPrice == null || itemPrice >= minPrice;
+                    boolean meetsMax = maxPrice == null || itemPrice <= maxPrice;
+                    return meetsMin && meetsMax;
+                })
                 .collect(Collectors.toList());
     }
 
     /**
      * Gets the minimum price from all items.
      *
-     * @return The minimum price value
+     * @return The minimum price value, or 0.0 if no items exist
      */
     public double getMinPrice() {
         return itemsMap.values().stream()
-                .mapToDouble(item -> PriceUtil.parsePrice(item.getPrice()))
+                .mapToDouble(Item::getPrice)
                 .min()
                 .orElse(0.0);
     }
@@ -180,11 +184,11 @@ public class ItemService {
     /**
      * Gets the maximum price from all items.
      *
-     * @return The maximum price value
+     * @return The maximum price value, or 0.0 if no items exist
      */
     public double getMaxPrice() {
         return itemsMap.values().stream()
-                .mapToDouble(item -> PriceUtil.parsePrice(item.getPrice()))
+                .mapToDouble(Item::getPrice)
                 .max()
                 .orElse(0.0);
     }

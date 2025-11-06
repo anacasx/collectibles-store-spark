@@ -6,7 +6,7 @@ package com.collectibles.model;
  * its unique identifier, name, description, and price.
  *
  * @author Rafael
- * @version 1.0.0
+ * @version 2.0.0
  */
 public class Item {
 
@@ -14,7 +14,7 @@ public class Item {
     private String id;
     private String name;
     private String description;
-    private String price;
+    private double price;
 
     /**
      * Default constructor.
@@ -30,9 +30,9 @@ public class Item {
      * @param id Unique identifier for the item
      * @param name Name of the collectible item
      * @param description Detailed description of the item
-     * @param price Price of the item in USD format
+     * @param price Price of the item as numeric value
      */
-    public Item(String id, String name, String description, String price) {
+    public Item(String id, String name, String description, double price) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -96,9 +96,9 @@ public class Item {
     /**
      * Gets the price of the item.
      *
-     * @return The item's price in USD format
+     * @return The item's price as numeric value
      */
-    public String getPrice() {
+    public double getPrice() {
         return price;
     }
 
@@ -107,8 +107,18 @@ public class Item {
      *
      * @param price The item's price to set
      */
-    public void setPrice(String price) {
+    public void setPrice(double price) {
         this.price = price;
+    }
+
+    /**
+     * Gets the formatted price string for display purposes.
+     * Format: "$XXX.XX USD"
+     *
+     * @return Formatted price string
+     */
+    public String getFormattedPrice() {
+        return String.format("$%.2f USD", price);
     }
 
     /**
@@ -123,7 +133,7 @@ public class Item {
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", price='" + price + '\'' +
+                ", price=" + price +
                 '}';
     }
 

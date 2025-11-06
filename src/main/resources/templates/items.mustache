@@ -117,7 +117,7 @@
                     <span class="item-name">
                         <a href="/items/view/{{id}}" class="item-name-link">{{name}}</a>
                     </span>
-                    <span class="item-price" data-item-id="{{id}}">{{price}}</span>
+                    <span class="item-price" data-item-id="{{id}}">${{price}} USD</span>
                 </div>
             </div>
         {{/items}}
@@ -209,19 +209,29 @@
 
         function updateItemPrice(itemId, newPrice, oldPrice) {
             console.log('Updating price for item', itemId, ':', oldPrice, '->', newPrice);
-            // Busca el elemento de precio usando el data-item-id
-            const priceElement = document.querySelector('[data-item-id="' + itemId + '"] .item-price');
+            
+            // Find the price element using data-item-id
+            const priceElement = document.querySelector('.item-price[data-item-id="' + itemId + '"]');
 
             if (priceElement) {
+                // Add animation class
                 priceElement.classList.add('price-updating');
+                
                 setTimeout(function() {
+                    // Update the text content with new price
                     priceElement.textContent = newPrice;
+                    
+                    // Remove updating animation and add updated animation
                     priceElement.classList.remove('price-updating');
                     priceElement.classList.add('price-updated');
+                    
+                    // Remove updated animation after 2 seconds
                     setTimeout(function() {
                         priceElement.classList.remove('price-updated');
                     }, 2000);
                 }, 300);
+                
+                // Show notification
                 showPriceUpdateNotification(itemId, newPrice, oldPrice);
             } else {
                 console.warn('Price element not found for item:', itemId);
@@ -233,9 +243,13 @@
             notification.className = 'price-notification';
             notification.innerHTML = 'Price updated for item ' + itemId + ': ' + oldPrice + ' → ' + newPrice;
             document.body.appendChild(notification);
+            
+            // Show notification
             setTimeout(function() {
                 notification.classList.add('show');
             }, 100);
+            
+            // Hide and remove notification after 3 seconds
             setTimeout(function() {
                 notification.classList.remove('show');
                 setTimeout(function() {
@@ -255,6 +269,7 @@
         // Connect on page load
         connectWebSocket();
 
+        // Close WebSocket connection when page unloads
         window.addEventListener('beforeunload', function() {
             if (ws) {
                 ws.close();
