@@ -343,6 +343,7 @@ curl http://localhost:4567/admin/ws-stats
     "price": 734.57
   }
 ]
+```
 
 ---
 
