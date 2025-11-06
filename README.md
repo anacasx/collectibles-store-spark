@@ -5,39 +5,39 @@ This sprint adds advanced price filtering and real-time price updates via WebSoc
 
 ---
 
-## 📋 Project Overview
+## Project Overview
 
 ### Challenge Context
 Rafael, a recent Systems Engineering graduate, is developing a website for his friend Ramon to sell collectible items online. This API serves as the backend foundation for the collectibles marketplace, enabling item browsing, user management, and real-time price tracking.
 
-### Sprint 1 ✅
-- ✅ Complete REST API with 10 endpoints
-- ✅ Items catalog management (7 collectibles)
-- ✅ Full CRUD operations for users
-- ✅ Maven project configuration
-- ✅ CORS-enabled for web applications
-- ✅ Comprehensive documentation
-- ✅ Postman test collection (45 tests)
+### Sprint 1
+- Complete REST API with 10 endpoints
+- Items catalog management (7 collectibles)
+- Full CRUD operations for users
+- Maven project configuration
+- CORS-enabled for web applications
+- Comprehensive documentation
+- Postman test collection (45 tests)
 
-### Sprint 2 ✅
-- ✅ Implemented exception handling module (404 & 500)
-- ✅ Configured Mustache template engine
-- ✅ Created items and offers templates
-- ✅ Integrated CSS and JS from instructor package
-- ✅ Implemented offer submission and viewing workflow
-- ✅ Ensured backward compatibility with API endpoints
+### Sprint 2
+- Implemented exception handling module (404 & 500)
+- Configured Mustache template engine
+- Created items and offers templates
+- Integrated CSS and JS from instructor package
+- Implemented offer submission and viewing workflow
+- Ensured backward compatibility with API endpoints
 
-### Sprint 3 ✅ (Current)
-- ✅ **Price filtering by range (minPrice, maxPrice)**
-- ✅ **WebSocket integration for real-time price updates**
-- ✅ **Improved data model (String → double for prices)**
-- ✅ **Admin panel for price management**
-- ✅ **Automatic price simulation system**
-- ✅ **Enhanced template with live price updates**
+### Sprint 3 (Current)
+- **Price filtering by range (minPrice, maxPrice)**
+- **WebSocket integration for real-time price updates**
+- **Improved data model (String → double for prices)**
+- **Admin panel for price management**
+- **Automatic price simulation system**
+- **Enhanced template with live price updates**
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Java 8 or higher
@@ -77,7 +77,7 @@ curl http://localhost:4567/health
 
 ---
 
-## 🔌 API Endpoints
+## API Endpoints
 
 ### Utility Endpoints
 - `GET /` - API information
@@ -118,7 +118,7 @@ curl http://localhost:4567/health
 
 ---
 
-## 🆕 New Features (Sprint 3)
+## New Features (Sprint 3)
 
 ### 1. Price Filtering
 Filter items by price range using query parameters:
@@ -181,7 +181,7 @@ The `Item` class now includes a `getFormattedPrice()` method for display purpose
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 collectibles-store-spark/
@@ -253,7 +253,7 @@ collectibles-store-spark/
 
 ---
 
-## 🧪 Testing
+## Testing
 
 ### Price Filtering Tests
 
@@ -296,7 +296,7 @@ curl http://localhost:4567/admin/ws-stats
 
 ---
 
-## 📚 Documentation
+## Documentation
 
 ### Core Documentation
 - [Quick Start Guide](docs/QUICK_START.md) - Get started in 5 minutes
@@ -310,7 +310,7 @@ curl http://localhost:4567/admin/ws-stats
 
 ---
 
-## 🛠 Technologies Used
+## Technologies Used
 
 | Technology | Version | Purpose |
 |------------|---------|---------|
@@ -324,7 +324,7 @@ curl http://localhost:4567/admin/ws-stats
 
 ---
 
-## 💾 Data Format Changes
+## Data Format Changes
 
 ### items.json Format (Sprint 3)
 
@@ -343,55 +343,47 @@ curl http://localhost:4567/admin/ws-stats
     "price": 734.57
   }
 ]
-```
-
-**⚠️ Important**: Remove the `"$"` and `"USD"` from price values. Use numeric values only.
 
 ---
 
-## 🔒 Security Features
+## Security Features
 
 ### Implemented
-- ✅ Input validation (required fields, email format, role values)
-- ✅ CORS configuration for web applications
-- ✅ Security headers (X-Content-Type-Options, X-Frame-Options, X-XSS-Protection)
-- ✅ Error handling with safe error messages
-- ✅ UTF-8 encoding support
-- ✅ WebSocket connection management
-
-### Not Yet Implemented
-- ⏳ Authentication/Authorization (planned for future)
-- ⏳ Rate limiting
-- ⏳ HTTPS/TLS
+- Input validation (required fields, email format, role values)
+- CORS configuration for web applications
+- Security headers (X-Content-Type-Options, X-Frame-Options, X-XSS-Protection)
+- Error handling with safe error messages
+- UTF-8 encoding support
+- WebSocket connection management
 
 ---
 
-## ✨ Features Summary
+## Features Summary
 
-### Sprint 1 ✅
-- ✅ RESTful API architecture
-- ✅ JSON request/response format
-- ✅ Full CRUD for users
-- ✅ Read operations for items
-- ✅ In-memory data storage
+### Sprint 1
+- RESTful API architecture
+- JSON request/response format
+- Full CRUD for users
+- Read operations for items
+- In-memory data storage
 
-### Sprint 2 ✅
-- ✅ Web templates with Mustache
-- ✅ Visual items catalog
-- ✅ Offer submission system
-- ✅ User-friendly error pages
+### Sprint 2 
+- Web templates with Mustache
+- Visual items catalog
+- Offer submission system
+- User-friendly error pages
 
-### Sprint 3 ✅ (Current)
-- ✅ **Price range filtering**
-- ✅ **WebSocket real-time updates**
-- ✅ **Improved price data model**
-- ✅ **Admin management panel**
-- ✅ **Automatic price simulation**
-- ✅ **Live connection status indicator**
+### Sprint 3 (Current)
+- **Price range filtering**
+- **WebSocket real-time updates**
+- **Improved price data model**
+- **Admin management panel**
+- **Automatic price simulation**
+- **Live connection status indicator**
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### WebSocket Connection Issues
 
@@ -418,7 +410,7 @@ mvn clean compile exec:java
 
 ---
 
-## 📊 API Response Status Codes
+## API Response Status Codes
 
 | Code | Status | Usage |
 |------|--------|-------|
@@ -432,7 +424,7 @@ mvn clean compile exec:java
 
 ---
 
-## 👥 Team
+## Team
 
 - **Rafael** - Lead Developer & System Architect
 - **Sofia** - Technical Advisor & Code Reviewer
@@ -440,13 +432,13 @@ mvn clean compile exec:java
 
 ---
 
-## 📜 License
+## License
 
 This project is part of the Digital NAO Backend Developer Certification program.
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Digital NAO team for the challenge design
 - Spark Framework community for excellent documentation
@@ -455,7 +447,7 @@ This project is part of the Digital NAO Backend Developer Certification program.
 
 ---
 
-## 📝 Version History
+## Version History
 
 ### Version 1.0.0 (Sprint 1)
 - Initial API implementation
@@ -468,7 +460,7 @@ This project is part of the Digital NAO Backend Developer Certification program.
 - Exception handling
 - Web forms and offers system
 
-### Version 3.0.0 (Sprint 3) - Current ⭐
+### Version 3.0.0 (Sprint 3) - Current 
 - Price filtering functionality
 - WebSocket real-time updates
 - Improved data model (double prices)
@@ -477,19 +469,19 @@ This project is part of the Digital NAO Backend Developer Certification program.
 
 ---
 
-## 📅 Project Timeline
+## Project Timeline
 
-- **Sprint 1**: 4 days (API Service Foundation) - ✅ COMPLETE
-- **Sprint 2**: 3 days (Templates & Exceptions) - ✅ COMPLETE
-- **Sprint 3**: 4 days (Filters & WebSockets) - ✅ COMPLETE
+- **Sprint 1**: 4 days (API Service Foundation) - COMPLETE
+- **Sprint 2**: 3 days (Templates & Exceptions) - COMPLETE
+- **Sprint 3**: 4 days (Filters & WebSockets) - COMPLETE
 - **Final Submission**: 2 days (Integration & Presentation) - In Progress
 
 ---
 
-## 📊 Project Status
+## Project Status
 
 **Sprint**: 3 of 3  
-**Status**: COMPLETE ✅  
+**Status**: COMPLETE  
 **Current Version**: 3.0.0  
 **Last Updated**: 11/06/2025  
 **Next Phase**: Final Integration & Presentation
@@ -501,6 +493,6 @@ This project is part of the Digital NAO Backend Developer Certification program.
 - [GitHub Repository](https://github.com/anacasx/collectibles-store-spark)
 - [API Documentation](docs/API_DOCUMENTATION.md)
 - [Quick Start Guide](docs/QUICK_START.md)
-- [WebSocket Guide](docs/WEBSOCKET.md) ⭐ NEW
+- [WebSocket Guide](docs/WEBSOCKET.md)  NEW
 - [Postman Collection](postman/)
 - [Full Documentation](docs/)
